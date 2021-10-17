@@ -23,7 +23,7 @@ public enum AST: Hashable {
   indirect case alternation([AST]) // alternation(AST, AST?)
   indirect case concatenation([AST])
   indirect case group(AST)
-  indirect case capturingGroup(AST)
+  indirect case capturingGroup(AST, transform: CaptureTransform? = nil)
 
   // Post-fix modifiers
   indirect case many(AST)
@@ -37,13 +37,41 @@ public enum AST: Hashable {
   case empty
 }
 
+public struct CaptureTransform: Equatable, Hashable, CustomStringConvertible {
+  public let closure: (Substring) -> Any
+
+  public init(_ closure: @escaping (Substring) -> Any) {
+    self.closure = closure
+  }
+
+  public func callAsFunction(_ input: Substring) -> Any {
+    closure(input)
+  }
+
+  public static func == (lhs: CaptureTransform, rhs: CaptureTransform) -> Bool {
+    unsafeBitCast(lhs.closure, to: (Int, Int).self) ==
+      unsafeBitCast(rhs.closure, to: (Int, Int).self)
+  }
+
+  public func hash(into hasher: inout Hasher) {
+    let (fn, ctx) = unsafeBitCast(closure, to: (Int, Int).self)
+    hasher.combine(fn)
+    hasher.combine(ctx)
+  }
+
+  public var description: String {
+    "<transform>"
+  }
+}
+
 extension AST: CustomStringConvertible {
   public var description: String {
     switch self {
     case .alternation(let rest): return ".alt(\(rest))"
     case .concatenation(let rest): return ".concat(\(rest))"
     case .group(let rest): return ".group(\(rest))"
-    case .capturingGroup(let rest): return ".capturingGroup(\(rest))"
+    case .capturingGroup(let rest, let transform):
+      return ".capturingGroup(\(rest), \(String(describing: transform))"
     case .many(let rest): return ".many(\(rest))"
     case .zeroOrOne(let rest): return ".zeroOrOne(\(rest))"
     case .oneOrMore(let rest): return ".oneOrMore(\(rest))"

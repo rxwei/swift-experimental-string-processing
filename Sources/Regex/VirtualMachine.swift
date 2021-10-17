@@ -13,7 +13,6 @@ public struct RECode {
   var instructions: InstructionList
   var labels: [InstructionAddress]
   var splits: [InstructionAddress]
-  var numCaptures: Int
   var options: Options
 }
 
@@ -46,11 +45,27 @@ extension RECode {
     /// The target of a branch, executed as a NOP
     case label(LabelId)
 
-    /// Begin a numbered capture
-    case beginCapture(CaptureId)
+    /// Begin a capture group
+    case beginGroup
 
-    /// End a numbered capture
-    case endCapture(CaptureId)
+    /// Ends a capture group
+    case endGroup
+
+    /// Begins capturing a portion of the input string
+    case beginCapture
+    /// Ends capturing a portion of the input string.
+    /// The captured portion is mapped using the provided function
+    case endCapture(transform: CaptureTransform? = nil)
+
+    /// Convert the capture stack x into [.some(x)]
+    case captureSome
+
+    /// Push "nil" onto the capture list
+    case captureNil
+
+    /// Convert the current capture stack into an array
+    /// of captures and then push
+    case captureArray
 
     var isAccept: Bool {
       switch self {
@@ -100,9 +115,6 @@ extension RECode.Instruction {
   }
 
   // Convenience constructors
-  static func beginCapture(_ i: Int) -> Self { .beginCapture(CaptureId(i)) }
-  static func endCapture(_ i: Int) -> Self { .endCapture(CaptureId(i)) }
-
   static func label(_ i: Int) -> Self { .label(LabelId(i)) }
 }
 
@@ -173,26 +185,84 @@ extension RECode {
 
   /// A convenient VM thread "core" abstraction
   public struct ThreadCore {
-    public var pc: InstructionAddress
-    public var captures: [CaptureStack]
+    enum CaptureState {
+      case started(String.Index)
+      case ended
 
-    public init(startingAt pc: InstructionAddress, numCaptures: Int) {
+      var isEnded: Bool {
+        guard case .ended = self else {
+          return false
+        }
+        return true
+      }
+
+      mutating func start(at index: String.Index) {
+        assert(isEnded, "Capture already started")
+        self = .started(index)
+      }
+
+      mutating func end(at endIndex: String.Index) -> Range<String.Index> {
+        guard case let .started(startIndex) = self else {
+          fatalError("Capture already ended")
+        }
+        self = .ended
+        return startIndex..<endIndex
+      }
+    }
+
+    public var pc: InstructionAddress
+    public var captureScopes = Stack<[Capture]>()
+    public var captures: [Capture] = []
+    let input: String
+    var captureState: CaptureState = .ended
+
+    public init(startingAt pc: InstructionAddress, input: String) {
       self.pc = pc
-      self.captures = Array(repeating: CaptureStack(), count: numCaptures)
+      self.input = input
     }
 
     public mutating func advance() { self.pc = self.pc + 1 }
     public mutating func go(to: InstructionAddress) { self.pc = to }
 
-    public mutating func beginCapture(
-      _ id: CaptureId, _ sp: String.Index
-    ) {
-      captures[id.rawValue].beginCapture(sp)
+    public mutating func beginCapture(_ index: String.Index) {
+      captureState.start(at: index)
     }
-    public mutating func endCapture(
-      _ id: CaptureId, _ sp: String.Index
-    ) {
-      captures[id.rawValue].endCapture(sp)
+
+    public mutating func endCapture(_ endIndex: String.Index, transform: CaptureTransform?) {
+      let range = captureState.end(at: endIndex)
+      let substring = input[range]
+      let value = transform?(substring) ?? substring
+      captures.append(.atom(value))
+    }
+
+    public mutating func beginGroup() {
+      captureScopes.push(captures)
+      captures = []
+    }
+
+    public mutating func endGroup() {
+      assert(!captureScopes.isEmpty)
+      var top = captureScopes.pop()
+      if !captures.isEmpty {
+        top.append(singleCapture())
+      }
+      captures = top
+    }
+
+    public mutating func captureNil() {
+      captures = [.optional(nil)]
+    }
+
+    public mutating func captureSome() {
+      captures = [.optional(.tupleOrAtom(captures))]
+    }
+
+    public mutating func captureArray() {
+      captures = [.array(captures)]
+    }
+
+    public func singleCapture() -> Capture {
+      .tupleOrAtom(captures)
     }
   }
 }
@@ -201,7 +271,7 @@ public struct Stack<T> {
   public var stack: Array<T>
 
   public init() { self.stack = [] }
-  public var isEmpty: Bool { return stack.isEmpty }
+  public var isEmpty: Bool { stack.isEmpty }
 
   public mutating func pop() -> T {
     guard !isEmpty else { fatalError("stack is empty") }
@@ -214,34 +284,12 @@ public struct Stack<T> {
     guard !isEmpty else { fatalError("stack is empty") }
     return stack.last!
   }
-}
-
-/// Convenience abstraction for modeling a regex capture
-///
-/// Regex captures can exist inside quantifications, so they are ultimately a stack of captures
-public struct CaptureStack {
-  private static let sentinel = String.Index(encodedOffset: 8675309)
-
-  public var stack: Stack<(String.Index, String.Index)>
-
-  public init() { self.stack = Stack() }
-  public mutating func beginCapture(_ idx: String.Index) {
-    stack.push((idx, CaptureStack.sentinel))
-  }
-  public mutating func endCapture(_ idx: String.Index) {
-    guard stack.peek().1 == CaptureStack.sentinel else {
-      fatalError("Malformed stack: must pair begin and end captures")
+  public var top: T {
+    get { peek() }
+    _modify {
+      guard !isEmpty else { fatalError("stack is empty") }
+      yield &stack[stack.endIndex - 1]
     }
-    let beginIdx = stack.pop().0
-    stack.push((beginIdx, idx))
-  }
-
-  // Testing conveniences
-  public func asSubstrings(from str: String) -> [Substring] {
-    return stack.stack.map { str[$0.0..<$0.1] }
-  }
-  public func asStrings(from str: String) -> [String] {
-    return stack.stack.map { str[$0.0..<$0.1] }.map { String($0) }
   }
 }
 
@@ -254,7 +302,7 @@ public protocol VirtualMachine {
   init(_: RECode)
 
   /// Match `input`
-  func execute(input: String) -> (Bool, [CaptureStack])
+  func execute(input: String) -> Capture?
 }
 
 extension RECode.Instruction: CustomStringConvertible {
@@ -269,8 +317,13 @@ extension RECode.Instruction: CustomStringConvertible {
     case .split(let i): return "<SPLIT disfavoring \(i)>"
     case .goto(let label): return "<GOTO \(label)>"
     case .label(let i): return "<\(i)>"
-    case .beginCapture(let id): return "<CAP \(id)>"
-    case .endCapture(let id): return "<END CAP \(id)>"
+    case .beginGroup: return "<BEGIN GROUP>"
+    case .endGroup: return "<END GROUP>"
+    case .beginCapture: return "<BEGIN CAP>"
+    case .endCapture: return "<END CAP>"
+    case .captureSome: return "<CAP SOME>"
+    case .captureNil: return "<CAP NIL>"
+    case .captureArray: return "<CAP ARRAY>"
     }
   }
 }

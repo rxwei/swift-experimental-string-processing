@@ -5,23 +5,12 @@ struct Hatchling {
   var core: RECode.ThreadCore
   var pc: InstructionAddress { return core.pc }
 
-  init(_ pc: InstructionAddress, numCaptures: Int) {
-    self.core = RECode.ThreadCore(startingAt: pc, numCaptures: numCaptures)
+  init(_ pc: InstructionAddress, input: String) {
+    self.core = RECode.ThreadCore(startingAt: pc, input: input)
   }
 
   mutating func plod() { core.advance() }
   mutating func plod(to: InstructionAddress) { core.go(to: to) }
-
-  mutating func beginCapture(
-    _ id: CaptureId, _ sp: String.Index
-  ) {
-    core.beginCapture(id, sp)
-  }
-  mutating func endCapture(
-    _ id: CaptureId, _ sp: String.Index
-  ) {
-    core.endCapture(id, sp)
-  }
 }
 
 /// A group of hatchlings that march in lock-step
@@ -44,9 +33,9 @@ public struct TortoiseVM: VirtualMachine {
     self.code = code
   }
 
-  public func execute(input: String) -> (Bool, [CaptureStack]) {
+  public func execute(input: String) -> Capture? {
     var bale = Bale()
-    let startTurtle = Hatchling(code.startIndex, numCaptures: code.numCaptures)
+    let startTurtle = Hatchling(code.startIndex, input: input)
     bale.append(contentsOf: readThrough(input.startIndex, startTurtle))
     var idx = input.startIndex
     while idx < input.endIndex {
@@ -54,10 +43,10 @@ public struct TortoiseVM: VirtualMachine {
     }
     for hatchling in bale {
       if code[hatchling.pc].isAccept {
-        return (true, hatchling.core.captures)
+        return hatchling.core.singleCapture()
       }
     }
-    return (false, [])
+    return nil
   }
 }
 
@@ -85,11 +74,26 @@ extension TortoiseVM {
           hatchling.plod(to: code.lookup(target)+1)
         case .label(_):
           hatchling.plod()
-        case .beginCapture(let id):
-          hatchling.beginCapture(id, sp)
+        case .beginCapture:
+          hatchling.core.beginCapture(sp)
           hatchling.plod()
-        case .endCapture(let id):
-          hatchling.endCapture(id, sp)
+        case .endCapture(let transform):
+          hatchling.core.endCapture(sp, transform: transform)
+          hatchling.plod()
+        case .beginGroup:
+          hatchling.core.beginGroup()
+          hatchling.plod()
+        case .endGroup:
+          hatchling.core.endGroup()
+          hatchling.plod()
+        case .captureSome:
+          hatchling.core.captureSome()
+          hatchling.plod()
+        case .captureNil:
+          hatchling.core.captureNil()
+          hatchling.plod()
+        case .captureArray:
+          hatchling.core.captureArray()
           hatchling.plod()
 
         default:

@@ -6,8 +6,8 @@ struct Leveret {
   var sp: String.Index
   var pc: InstructionAddress { return core.pc }
 
-  init(_ pc: InstructionAddress, _ sp: String.Index, numCaptures: Int) {
-    self.core = RECode.ThreadCore(startingAt: pc, numCaptures: numCaptures)
+  init(pc: InstructionAddress, sp: String.Index, input: String) {
+    self.core = RECode.ThreadCore(startingAt: pc, input: input)
     self.sp = sp
   }
 
@@ -21,13 +21,6 @@ struct Leveret {
 
   mutating func nibbleScalar(on str: String) {
     sp = str.unicodeScalars.index(after: sp)
-  }
-
-  mutating func beginCapture(_ id: CaptureId) {
-    core.beginCapture(id, sp)
-  }
-  mutating func endCapture(_ id: CaptureId) {
-    core.endCapture(id, sp)
   }
 }
 
@@ -65,10 +58,9 @@ public struct HareVM: VirtualMachine {
     self.code = code
   }
 
-  public func execute(input: String) -> (Bool, [CaptureStack]) {
+  public func execute(input: String) -> Capture? {
     assert(code.last!.isAccept)
-    var bunny = Leveret(
-      code.startIndex, input.startIndex, numCaptures: code.numCaptures)
+    var bunny = Leveret(pc: code.startIndex, sp: input.startIndex, input: input)
     var stack = BunnyStack()
 
     while true {
@@ -77,7 +69,7 @@ public struct HareVM: VirtualMachine {
       // Consuming operations require more input
       guard bunny.sp < input.endIndex || !inst.isConsuming else {
         // If there are no more alternatives to try, we failed
-        guard !stack.isEmpty else { return (false, []) }
+        guard !stack.isEmpty else { return nil }
 
         // Continue with the next alternative
         bunny = stack.restore()
@@ -89,11 +81,11 @@ public struct HareVM: VirtualMachine {
       case .accept:
         // If we've matched all of our input, we're done
         if bunny.sp == input.endIndex {
-          return (true, bunny.core.captures)
+          return bunny.core.singleCapture()
         }
         // If there are no more alternatives to try, we failed
         guard !stack.isEmpty else {
-          return (false, [])
+          return nil
         }
 
         // Continue with the next alternative
@@ -109,7 +101,7 @@ public struct HareVM: VirtualMachine {
         guard input[bunny.sp] == c else {
           // If there are no more alternatives to try, we failed
           guard !stack.isEmpty else {
-            return (false, [])
+            return nil
           }
 
           // Continue with the next alternative
@@ -124,7 +116,7 @@ public struct HareVM: VirtualMachine {
         guard input.unicodeScalars[bunny.sp] == u else {
           // If there are no more alternatives to try, we failed
           guard !stack.isEmpty else {
-            return (false, [])
+            return nil
           }
 
           // Continue with the next alternative
@@ -139,7 +131,7 @@ public struct HareVM: VirtualMachine {
         guard let nextSp = cc.matches(in: input, at: bunny.sp) else {
           // If there are no more alternatives to try, we failed
           guard !stack.isEmpty else {
-            return (false, [])
+            return nil
           }
 
           // Continue with the next alternative
@@ -161,12 +153,32 @@ public struct HareVM: VirtualMachine {
       case .label(_):
         bunny.hop()
 
-      case .beginCapture(let id):
-        bunny.beginCapture(id)
+      case .beginCapture:
+        bunny.core.beginCapture(bunny.sp)
         bunny.hop()
 
-      case .endCapture(let id):
-        bunny.endCapture(id)
+      case let .endCapture(transform):
+        bunny.core.endCapture(bunny.sp, transform: transform)
+        bunny.hop()
+
+      case .beginGroup:
+        bunny.core.beginGroup()
+        bunny.hop()
+
+      case .endGroup:
+        bunny.core.endGroup()
+        bunny.hop()
+
+      case .captureSome:
+        bunny.core.captureSome()
+        bunny.hop()
+
+      case .captureNil:
+        bunny.core.captureNil()
+        bunny.hop()
+
+      case .captureArray:
+        bunny.core.captureArray()
         bunny.hop()
       }
     }
