@@ -43,6 +43,13 @@ func concat(_ asts: AST.Node...) -> AST.Node {
   concat(asts)
 }
 
+func append(_ new: AST.Node, to combined: AST.Node) -> AST.Node {
+  if case .concatenation(let concatenation) = combined {
+    return concat(concatenation.children + [new])
+  }
+  return concat(combined, new)
+}
+
 func empty() -> AST.Node {
   .empty(.init(.fake))
 }

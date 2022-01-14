@@ -11,10 +11,21 @@
 
 @resultBuilder
 public enum RegexBuilder {
+  @_disfavoredOverload
   public static func buildBlock<R0: RegexProtocol>(_ r0: R0) -> R0 {
     r0
   }
-  
+
+  public static func buildBlock<R0: RegexProtocol>(
+    _ r0: R0
+  ) -> Regex<Substring> where R0.Match: EmptyCaptureProtocol {
+    .init(ast: r0.regex.ast)
+  }
+
+  public static func buildExpression<R: RegexProtocol>(_ regex: R) -> R {
+    regex
+  }
+
   public static func buildEither<R: RegexProtocol>(first component: R) -> R {
     component
   }
