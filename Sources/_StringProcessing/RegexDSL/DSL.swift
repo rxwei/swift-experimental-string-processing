@@ -10,12 +10,10 @@
 //===----------------------------------------------------------------------===//
 
 import _MatchingEngine
-import Foundation
 
 // MARK: - Primitives
 
 extension String: RegexProtocol {
-  public typealias Capture = EmptyCapture
   public typealias Match = Substring
 
   public var regex: Regex<Match> {
@@ -25,7 +23,6 @@ extension String: RegexProtocol {
 }
 
 extension Character: RegexProtocol {
-  public typealias Capture = EmptyCapture
   public typealias Match = Substring
 
   public var regex: Regex<Match> {
@@ -34,7 +31,6 @@ extension Character: RegexProtocol {
 }
 
 extension CharacterClass: RegexProtocol {
-  public typealias Capture = EmptyCapture
   public typealias Match = Substring
 
   public var regex: Regex<Match> {
@@ -44,7 +40,6 @@ extension CharacterClass: RegexProtocol {
     return Regex(ast: ast)
   }
 }
-
 
 // MARK: - Combinators
 
@@ -99,7 +94,6 @@ extension CharacterClass: RegexProtocol {
 //   _OneOrMoreNonCapturing(component)
 // }
 
-
 postfix operator .?
 postfix operator .*
 postfix operator .+
@@ -122,8 +116,8 @@ public func oneOrMore(_ cc: CharacterClass) -> _OneOrMore_0<CharacterClass> {
 // TODO: Support heterogeneous capture alternation.
 public struct Alternation<
   Component1: RegexProtocol, Component2: RegexProtocol
->: RegexProtocol where Component1.Match.Capture == Component2.Match.Capture {
-  public typealias Match = Tuple2<Substring, Component1.Match.Capture>
+>: RegexProtocol {
+  public typealias Match = Component1.Match
 
   public let regex: Regex<Match>
 
@@ -148,7 +142,7 @@ public func | <Component1, Component2>(
 
 // MARK: - Capture
 
-public struct CapturingGroup<Match: MatchProtocol>: RegexProtocol {
+public struct CapturingGroup<Match>: RegexProtocol {
   public let regex: Regex<Match>
 
   init<Component: RegexProtocol>(
