@@ -36,6 +36,13 @@ func alt(_ asts: AST.Node...) -> AST.Node {
   alt(asts)
 }
 
+func appendAlt(_ new: AST.Node, to combined: AST.Node) -> AST.Node {
+  if case .alternation(let alternation) = combined {
+    return alt(alternation.children + [new])
+  }
+  return alt(combined, new)
+}
+
 func concat(_ asts: [AST.Node]) -> AST.Node {
   .concatenation(.init(asts, .fake))
 }

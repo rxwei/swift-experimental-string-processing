@@ -30,7 +30,6 @@ extension AST.Node {
     // Note: This implementation could be more optimized.
     switch self {
     case .alternation(let alternation):
-      assert(alternation.children.count > 1)
       return alternation.children
         .map(\.captureStructure)
         .reduce(.empty, +)

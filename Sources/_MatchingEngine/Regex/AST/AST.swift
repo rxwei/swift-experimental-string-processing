@@ -153,7 +153,7 @@ extension AST {
     public init(_ mems: [AST.Node], pipes: [SourceLocation]) {
       // An alternation must have at least two branches (though the branches
       // may be empty AST nodes), and n - 1 pipes.
-      precondition(mems.count >= 2)
+      // precondition(mems.count >= 2)
       precondition(pipes.count == mems.count - 1)
 
       self.children = mems
