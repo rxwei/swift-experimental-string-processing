@@ -9,6 +9,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+@available(*, deprecated, message: "Use free functions 'capture' and 'tryCapture' instead")
 extension RegexProtocol {
   @_disfavoredOverload
   public func capture() -> CapturingGroup<(Substring, Substring)> {
