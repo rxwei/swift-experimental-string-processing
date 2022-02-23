@@ -81,6 +81,10 @@ func outputForEach<C: Collection>(
   }
 }
 
+func conditionally(_ condition: Bool, _ string: String) -> String {
+  condition ? string : ""
+}
+
 struct StandardErrorStream: TextOutputStream {
   func write(_ string: String) {
     fputs(string, stderr)
@@ -314,14 +318,13 @@ struct VariadicsGenerator: ParsableCommand {
     var disfavored: String
     var genericParams: String
     var whereClause: String
+    var whereClauseWithOptionals: String
     var quantifiedCaptures: String
+    var quantifiedCapturesWithOptionals: String
     var matchType: String
-    
-    var repeatingWhereClause: String {
-      whereClause.isEmpty
-        ? "where R.Bound == Int"
-        : whereClause + ", R.Bound == Int"
-    }
+    var matchTypeWithOptionals: String
+    var repeatingWhereClause: String
+    var repeatingWhereClauseWithOptionals: String
     
     init(kind: QuantifierKind, arity: Int) {
       self.disfavored = arity == 0 ? "@_disfavoredOverload\n" : ""
@@ -337,9 +340,13 @@ struct VariadicsGenerator: ParsableCommand {
       }()
       
       let captures = (0..<arity).map { "C\($0)" }
+      let optionalCaptures = (0..<arity).map { "C\($0)?" }
       let capturesJoined = captures.joined(separator: ", ")
+      let optionalCapturesJoined = optionalCaptures.joined(separator: ", ")
       self.whereClause = arity == 0 ? "" :
         "where Component.Match == (W, \(capturesJoined))"
+      self.whereClauseWithOptionals = arity == 0 ? "" :
+        "where Component.Match == (W, \(optionalCapturesJoined))"
       self.quantifiedCaptures = {
         switch kind {
         case .zeroOrOne, .zeroOrMore:
@@ -348,9 +355,26 @@ struct VariadicsGenerator: ParsableCommand {
           return capturesJoined
         }
       }()
+      self.quantifiedCapturesWithOptionals = {
+        switch kind {
+        case .zeroOrOne, .zeroOrMore:
+          return captures.map { "\($0)" }.joined(separator: ", ")
+        case .oneOrMore:
+          return capturesJoined
+        }
+      }()
       self.matchType = arity == 0
         ? baseMatchTypeName
         : "(\(baseMatchTypeName), \(quantifiedCaptures))"
+      self.matchTypeWithOptionals = arity == 0
+        ? baseMatchTypeName
+        : "(\(baseMatchTypeName), \(quantifiedCapturesWithOptionals))"
+      self.repeatingWhereClause = whereClause.isEmpty
+        ? "where R.Bound == Int"
+        : whereClause + ", R.Bound == Int"
+      self.repeatingWhereClauseWithOptionals = whereClauseWithOptionals.isEmpty
+        ? "where R.Bound == Int"
+        : whereClauseWithOptionals + ", R.Bound == Int"
     }
   }
 
@@ -393,6 +417,45 @@ struct VariadicsGenerator: ParsableCommand {
         """ : "")
 
       """)
+
+      if arity >= 1 {
+        output("""
+          \(params.disfavored)\
+          public func \(kind.rawValue)<\(params.genericParams)>(
+            _ component: Component,
+            _ behavior: QuantificationBehavior = .eagerly
+          ) -> \(regexTypeName)<\(params.matchTypeWithOptionals)> \(params.whereClauseWithOptionals) {
+            .init(node: .quantification(.\(kind.astQuantifierAmount), behavior.astKind, component.regex.root))
+          }
+
+          \(params.disfavored)\
+          public func \(kind.rawValue)<\(params.genericParams)>(
+            _ behavior: QuantificationBehavior = .eagerly,
+            @RegexBuilder _ component: () -> Component
+          ) -> \(regexTypeName)<\(params.matchTypeWithOptionals)> \(params.whereClauseWithOptionals) {
+            .init(node: .quantification(.\(kind.astQuantifierAmount), behavior.astKind, component().regex.root))
+          }
+
+          \(params.disfavored)\
+          public postfix func \(kind.operatorName)<\(params.genericParams)>(
+            _ component: Component
+          ) -> \(regexTypeName)<\(params.matchTypeWithOptionals)> \(params.whereClauseWithOptionals) {
+            .init(node: .quantification(.\(kind.astQuantifierAmount), .eager, component.regex.root))
+          }
+
+          \(kind == .zeroOrOne ?
+            """
+            extension RegexBuilder {
+              public static func buildLimitedAvailability<\(params.genericParams)>(
+                _ component: Component
+              ) -> \(regexTypeName)<\(params.matchType)> \(params.whereClauseWithOptionals) {
+                .init(node: .quantification(.\(kind.astQuantifierAmount), .eager, component.regex.root))
+              }
+            }
+            """ : "")
+
+          """)
+      }
   }
   
   func emitRepeating(arity: Int) {
@@ -440,8 +503,31 @@ struct VariadicsGenerator: ParsableCommand {
       ) -> \(regexTypeName)<\(params.matchType)> \(params.repeatingWhereClause) {
         .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component().regex.root))
       }
-      
+
       """)
+
+    if arity >= 1 {
+      output("""
+        \(params.disfavored)\
+        public func repeating<\(params.genericParams), R: RangeExpression>(
+          _ component: Component,
+          _ expression: R,
+          _ behavior: QuantificationBehavior = .eagerly
+        ) -> \(regexTypeName)<\(params.matchTypeWithOptionals)> \(params.repeatingWhereClauseWithOptionals) {
+          .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component.regex.root))
+        }
+
+        \(params.disfavored)\
+        public func repeating<\(params.genericParams), R: RangeExpression>(
+          _ expression: R,
+          _ behavior: QuantificationBehavior = .eagerly,
+          @RegexBuilder _ component: () -> Component
+        ) -> \(regexTypeName)<\(params.matchTypeWithOptionals)> \(params.repeatingWhereClauseWithOptionals) {
+          .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component().regex.root))
+        }
+
+        """)
+    }
   }
 
   func emitAlternation(leftArity: Int, rightArity: Int) {
@@ -468,8 +554,18 @@ struct VariadicsGenerator: ParsableCommand {
       }
       return result
     }()
+    let whereClauseWithOptional: String = {
+      var result = "where R0: \(regexProtocolName), R1: \(regexProtocolName)"
+      if leftArity > 0 {
+        result += ", R0.\(matchAssociatedTypeName) == (W0, \((0..<leftArity).map { "C\($0)?" }.joined(separator: ", ")))"
+      }
+      if rightArity > 0 {
+        result += ", R1.\(matchAssociatedTypeName) == (W1, \((leftArity..<leftArity+rightArity).map { "C\($0)?" }.joined(separator: ", ")))"
+      }
+      return result
+    }()
     let resultCaptures: String = {
-      var result = (0..<leftArity).map { "C\($0)" }.joined(separator: ", ")
+      var result = (0..<leftArity).map { "C\($0)?" }.joined(separator: ", ")
       if leftArity > 0, rightArity > 0 {
         result += ", "
       }
@@ -495,7 +591,25 @@ struct VariadicsGenerator: ParsableCommand {
         .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
       }
 
+
       """)
+
+    if leftArity + rightArity > 0 {
+      output("""
+        extension AlternationBuilder {
+          public static func buildBlock<\(genericParams)>(
+            combining next: R1, into combined: R0
+          ) -> \(regexTypeName)<\(matchType)> \(whereClauseWithOptional) {
+            .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+          }
+        }
+
+        public func | <\(genericParams)>(lhs: R0, rhs: R1) -> \(regexTypeName)<\(matchType)> \(whereClauseWithOptional) {
+          .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+        }
+
+        """)
+    }
   }
 
   func emitUnaryAlternationBuildBlock(arity: Int) {

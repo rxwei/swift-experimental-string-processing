@@ -612,6 +612,33 @@ extension RegexBuilder {
     .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
   }
 }
+public func optionally<W, C0, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0)> where Component.Match == (W, C0?) {
+  .init(node: .quantification(.zeroOrOne, behavior.astKind, component.regex.root))
+}
+
+public func optionally<W, C0, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0)> where Component.Match == (W, C0?) {
+  .init(node: .quantification(.zeroOrOne, behavior.astKind, component().regex.root))
+}
+
+public postfix func .?<W, C0, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0)> where Component.Match == (W, C0?) {
+  .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
+}
+
+extension RegexBuilder {
+  public static func buildLimitedAvailability<W, C0, Component: RegexProtocol>(
+    _ component: Component
+  ) -> Regex<(Substring, C0?)> where Component.Match == (W, C0?) {
+    .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
+  }
+}
 public func zeroOrMore<W, C0, Component: RegexProtocol>(
   _ component: Component,
   _ behavior: QuantificationBehavior = .eagerly
@@ -633,6 +660,27 @@ public postfix func .*<W, C0, Component: RegexProtocol>(
 }
 
 
+public func zeroOrMore<W, C0, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0)> where Component.Match == (W, C0?) {
+  .init(node: .quantification(.zeroOrMore, behavior.astKind, component.regex.root))
+}
+
+public func zeroOrMore<W, C0, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0)> where Component.Match == (W, C0?) {
+  .init(node: .quantification(.zeroOrMore, behavior.astKind, component().regex.root))
+}
+
+public postfix func .*<W, C0, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0)> where Component.Match == (W, C0?) {
+  .init(node: .quantification(.zeroOrMore, .eager, component.regex.root))
+}
+
+
 public func oneOrMore<W, C0, Component: RegexProtocol>(
   _ component: Component,
   _ behavior: QuantificationBehavior = .eagerly
@@ -650,6 +698,27 @@ public func oneOrMore<W, C0, Component: RegexProtocol>(
 public postfix func .+<W, C0, Component: RegexProtocol>(
   _ component: Component
 ) -> Regex<(Substring, C0)> where Component.Match == (W, C0) {
+  .init(node: .quantification(.oneOrMore, .eager, component.regex.root))
+}
+
+
+public func oneOrMore<W, C0, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0)> where Component.Match == (W, C0?) {
+  .init(node: .quantification(.oneOrMore, behavior.astKind, component.regex.root))
+}
+
+public func oneOrMore<W, C0, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0)> where Component.Match == (W, C0?) {
+  .init(node: .quantification(.oneOrMore, behavior.astKind, component().regex.root))
+}
+
+public postfix func .+<W, C0, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0)> where Component.Match == (W, C0?) {
   .init(node: .quantification(.oneOrMore, .eager, component.regex.root))
 }
 
@@ -685,6 +754,21 @@ public func repeating<W, C0, Component: RegexProtocol, R: RangeExpression>(
   _ behavior: QuantificationBehavior = .eagerly,
   @RegexBuilder _ component: () -> Component
 ) -> Regex<(Substring, C0?)> where Component.Match == (W, C0), R.Bound == Int {
+  .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component().regex.root))
+}
+public func repeating<W, C0, Component: RegexProtocol, R: RangeExpression>(
+  _ component: Component,
+  _ expression: R,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0)> where Component.Match == (W, C0?), R.Bound == Int {
+  .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component.regex.root))
+}
+
+public func repeating<W, C0, Component: RegexProtocol, R: RangeExpression>(
+  _ expression: R,
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0)> where Component.Match == (W, C0?), R.Bound == Int {
   .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component().regex.root))
 }
 public func optionally<W, C0, C1, Component: RegexProtocol>(
@@ -714,6 +798,33 @@ extension RegexBuilder {
     .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
   }
 }
+public func optionally<W, C0, C1, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1)> where Component.Match == (W, C0?, C1?) {
+  .init(node: .quantification(.zeroOrOne, behavior.astKind, component.regex.root))
+}
+
+public func optionally<W, C0, C1, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1)> where Component.Match == (W, C0?, C1?) {
+  .init(node: .quantification(.zeroOrOne, behavior.astKind, component().regex.root))
+}
+
+public postfix func .?<W, C0, C1, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0, C1)> where Component.Match == (W, C0?, C1?) {
+  .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
+}
+
+extension RegexBuilder {
+  public static func buildLimitedAvailability<W, C0, C1, Component: RegexProtocol>(
+    _ component: Component
+  ) -> Regex<(Substring, C0?, C1?)> where Component.Match == (W, C0?, C1?) {
+    .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
+  }
+}
 public func zeroOrMore<W, C0, C1, Component: RegexProtocol>(
   _ component: Component,
   _ behavior: QuantificationBehavior = .eagerly
@@ -735,6 +846,27 @@ public postfix func .*<W, C0, C1, Component: RegexProtocol>(
 }
 
 
+public func zeroOrMore<W, C0, C1, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1)> where Component.Match == (W, C0?, C1?) {
+  .init(node: .quantification(.zeroOrMore, behavior.astKind, component.regex.root))
+}
+
+public func zeroOrMore<W, C0, C1, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1)> where Component.Match == (W, C0?, C1?) {
+  .init(node: .quantification(.zeroOrMore, behavior.astKind, component().regex.root))
+}
+
+public postfix func .*<W, C0, C1, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0, C1)> where Component.Match == (W, C0?, C1?) {
+  .init(node: .quantification(.zeroOrMore, .eager, component.regex.root))
+}
+
+
 public func oneOrMore<W, C0, C1, Component: RegexProtocol>(
   _ component: Component,
   _ behavior: QuantificationBehavior = .eagerly
@@ -752,6 +884,27 @@ public func oneOrMore<W, C0, C1, Component: RegexProtocol>(
 public postfix func .+<W, C0, C1, Component: RegexProtocol>(
   _ component: Component
 ) -> Regex<(Substring, C0, C1)> where Component.Match == (W, C0, C1) {
+  .init(node: .quantification(.oneOrMore, .eager, component.regex.root))
+}
+
+
+public func oneOrMore<W, C0, C1, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1)> where Component.Match == (W, C0?, C1?) {
+  .init(node: .quantification(.oneOrMore, behavior.astKind, component.regex.root))
+}
+
+public func oneOrMore<W, C0, C1, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1)> where Component.Match == (W, C0?, C1?) {
+  .init(node: .quantification(.oneOrMore, behavior.astKind, component().regex.root))
+}
+
+public postfix func .+<W, C0, C1, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0, C1)> where Component.Match == (W, C0?, C1?) {
   .init(node: .quantification(.oneOrMore, .eager, component.regex.root))
 }
 
@@ -787,6 +940,21 @@ public func repeating<W, C0, C1, Component: RegexProtocol, R: RangeExpression>(
   _ behavior: QuantificationBehavior = .eagerly,
   @RegexBuilder _ component: () -> Component
 ) -> Regex<(Substring, C0?, C1?)> where Component.Match == (W, C0, C1), R.Bound == Int {
+  .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component().regex.root))
+}
+public func repeating<W, C0, C1, Component: RegexProtocol, R: RangeExpression>(
+  _ component: Component,
+  _ expression: R,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1)> where Component.Match == (W, C0?, C1?), R.Bound == Int {
+  .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component.regex.root))
+}
+
+public func repeating<W, C0, C1, Component: RegexProtocol, R: RangeExpression>(
+  _ expression: R,
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1)> where Component.Match == (W, C0?, C1?), R.Bound == Int {
   .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component().regex.root))
 }
 public func optionally<W, C0, C1, C2, Component: RegexProtocol>(
@@ -816,6 +984,33 @@ extension RegexBuilder {
     .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
   }
 }
+public func optionally<W, C0, C1, C2, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2)> where Component.Match == (W, C0?, C1?, C2?) {
+  .init(node: .quantification(.zeroOrOne, behavior.astKind, component.regex.root))
+}
+
+public func optionally<W, C0, C1, C2, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2)> where Component.Match == (W, C0?, C1?, C2?) {
+  .init(node: .quantification(.zeroOrOne, behavior.astKind, component().regex.root))
+}
+
+public postfix func .?<W, C0, C1, C2, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0, C1, C2)> where Component.Match == (W, C0?, C1?, C2?) {
+  .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
+}
+
+extension RegexBuilder {
+  public static func buildLimitedAvailability<W, C0, C1, C2, Component: RegexProtocol>(
+    _ component: Component
+  ) -> Regex<(Substring, C0?, C1?, C2?)> where Component.Match == (W, C0?, C1?, C2?) {
+    .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
+  }
+}
 public func zeroOrMore<W, C0, C1, C2, Component: RegexProtocol>(
   _ component: Component,
   _ behavior: QuantificationBehavior = .eagerly
@@ -837,6 +1032,27 @@ public postfix func .*<W, C0, C1, C2, Component: RegexProtocol>(
 }
 
 
+public func zeroOrMore<W, C0, C1, C2, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2)> where Component.Match == (W, C0?, C1?, C2?) {
+  .init(node: .quantification(.zeroOrMore, behavior.astKind, component.regex.root))
+}
+
+public func zeroOrMore<W, C0, C1, C2, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2)> where Component.Match == (W, C0?, C1?, C2?) {
+  .init(node: .quantification(.zeroOrMore, behavior.astKind, component().regex.root))
+}
+
+public postfix func .*<W, C0, C1, C2, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0, C1, C2)> where Component.Match == (W, C0?, C1?, C2?) {
+  .init(node: .quantification(.zeroOrMore, .eager, component.regex.root))
+}
+
+
 public func oneOrMore<W, C0, C1, C2, Component: RegexProtocol>(
   _ component: Component,
   _ behavior: QuantificationBehavior = .eagerly
@@ -854,6 +1070,27 @@ public func oneOrMore<W, C0, C1, C2, Component: RegexProtocol>(
 public postfix func .+<W, C0, C1, C2, Component: RegexProtocol>(
   _ component: Component
 ) -> Regex<(Substring, C0, C1, C2)> where Component.Match == (W, C0, C1, C2) {
+  .init(node: .quantification(.oneOrMore, .eager, component.regex.root))
+}
+
+
+public func oneOrMore<W, C0, C1, C2, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2)> where Component.Match == (W, C0?, C1?, C2?) {
+  .init(node: .quantification(.oneOrMore, behavior.astKind, component.regex.root))
+}
+
+public func oneOrMore<W, C0, C1, C2, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2)> where Component.Match == (W, C0?, C1?, C2?) {
+  .init(node: .quantification(.oneOrMore, behavior.astKind, component().regex.root))
+}
+
+public postfix func .+<W, C0, C1, C2, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0, C1, C2)> where Component.Match == (W, C0?, C1?, C2?) {
   .init(node: .quantification(.oneOrMore, .eager, component.regex.root))
 }
 
@@ -889,6 +1126,21 @@ public func repeating<W, C0, C1, C2, Component: RegexProtocol, R: RangeExpressio
   _ behavior: QuantificationBehavior = .eagerly,
   @RegexBuilder _ component: () -> Component
 ) -> Regex<(Substring, C0?, C1?, C2?)> where Component.Match == (W, C0, C1, C2), R.Bound == Int {
+  .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component().regex.root))
+}
+public func repeating<W, C0, C1, C2, Component: RegexProtocol, R: RangeExpression>(
+  _ component: Component,
+  _ expression: R,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2)> where Component.Match == (W, C0?, C1?, C2?), R.Bound == Int {
+  .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component.regex.root))
+}
+
+public func repeating<W, C0, C1, C2, Component: RegexProtocol, R: RangeExpression>(
+  _ expression: R,
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2)> where Component.Match == (W, C0?, C1?, C2?), R.Bound == Int {
   .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component().regex.root))
 }
 public func optionally<W, C0, C1, C2, C3, Component: RegexProtocol>(
@@ -918,6 +1170,33 @@ extension RegexBuilder {
     .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
   }
 }
+public func optionally<W, C0, C1, C2, C3, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2, C3)> where Component.Match == (W, C0?, C1?, C2?, C3?) {
+  .init(node: .quantification(.zeroOrOne, behavior.astKind, component.regex.root))
+}
+
+public func optionally<W, C0, C1, C2, C3, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2, C3)> where Component.Match == (W, C0?, C1?, C2?, C3?) {
+  .init(node: .quantification(.zeroOrOne, behavior.astKind, component().regex.root))
+}
+
+public postfix func .?<W, C0, C1, C2, C3, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0, C1, C2, C3)> where Component.Match == (W, C0?, C1?, C2?, C3?) {
+  .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
+}
+
+extension RegexBuilder {
+  public static func buildLimitedAvailability<W, C0, C1, C2, C3, Component: RegexProtocol>(
+    _ component: Component
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?)> where Component.Match == (W, C0?, C1?, C2?, C3?) {
+    .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
+  }
+}
 public func zeroOrMore<W, C0, C1, C2, C3, Component: RegexProtocol>(
   _ component: Component,
   _ behavior: QuantificationBehavior = .eagerly
@@ -939,6 +1218,27 @@ public postfix func .*<W, C0, C1, C2, C3, Component: RegexProtocol>(
 }
 
 
+public func zeroOrMore<W, C0, C1, C2, C3, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2, C3)> where Component.Match == (W, C0?, C1?, C2?, C3?) {
+  .init(node: .quantification(.zeroOrMore, behavior.astKind, component.regex.root))
+}
+
+public func zeroOrMore<W, C0, C1, C2, C3, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2, C3)> where Component.Match == (W, C0?, C1?, C2?, C3?) {
+  .init(node: .quantification(.zeroOrMore, behavior.astKind, component().regex.root))
+}
+
+public postfix func .*<W, C0, C1, C2, C3, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0, C1, C2, C3)> where Component.Match == (W, C0?, C1?, C2?, C3?) {
+  .init(node: .quantification(.zeroOrMore, .eager, component.regex.root))
+}
+
+
 public func oneOrMore<W, C0, C1, C2, C3, Component: RegexProtocol>(
   _ component: Component,
   _ behavior: QuantificationBehavior = .eagerly
@@ -956,6 +1256,27 @@ public func oneOrMore<W, C0, C1, C2, C3, Component: RegexProtocol>(
 public postfix func .+<W, C0, C1, C2, C3, Component: RegexProtocol>(
   _ component: Component
 ) -> Regex<(Substring, C0, C1, C2, C3)> where Component.Match == (W, C0, C1, C2, C3) {
+  .init(node: .quantification(.oneOrMore, .eager, component.regex.root))
+}
+
+
+public func oneOrMore<W, C0, C1, C2, C3, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2, C3)> where Component.Match == (W, C0?, C1?, C2?, C3?) {
+  .init(node: .quantification(.oneOrMore, behavior.astKind, component.regex.root))
+}
+
+public func oneOrMore<W, C0, C1, C2, C3, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2, C3)> where Component.Match == (W, C0?, C1?, C2?, C3?) {
+  .init(node: .quantification(.oneOrMore, behavior.astKind, component().regex.root))
+}
+
+public postfix func .+<W, C0, C1, C2, C3, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0, C1, C2, C3)> where Component.Match == (W, C0?, C1?, C2?, C3?) {
   .init(node: .quantification(.oneOrMore, .eager, component.regex.root))
 }
 
@@ -991,6 +1312,21 @@ public func repeating<W, C0, C1, C2, C3, Component: RegexProtocol, R: RangeExpre
   _ behavior: QuantificationBehavior = .eagerly,
   @RegexBuilder _ component: () -> Component
 ) -> Regex<(Substring, C0?, C1?, C2?, C3?)> where Component.Match == (W, C0, C1, C2, C3), R.Bound == Int {
+  .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component().regex.root))
+}
+public func repeating<W, C0, C1, C2, C3, Component: RegexProtocol, R: RangeExpression>(
+  _ component: Component,
+  _ expression: R,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2, C3)> where Component.Match == (W, C0?, C1?, C2?, C3?), R.Bound == Int {
+  .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component.regex.root))
+}
+
+public func repeating<W, C0, C1, C2, C3, Component: RegexProtocol, R: RangeExpression>(
+  _ expression: R,
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2, C3)> where Component.Match == (W, C0?, C1?, C2?, C3?), R.Bound == Int {
   .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component().regex.root))
 }
 public func optionally<W, C0, C1, C2, C3, C4, Component: RegexProtocol>(
@@ -1020,6 +1356,33 @@ extension RegexBuilder {
     .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
   }
 }
+public func optionally<W, C0, C1, C2, C3, C4, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2, C3, C4)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?) {
+  .init(node: .quantification(.zeroOrOne, behavior.astKind, component.regex.root))
+}
+
+public func optionally<W, C0, C1, C2, C3, C4, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?) {
+  .init(node: .quantification(.zeroOrOne, behavior.astKind, component().regex.root))
+}
+
+public postfix func .?<W, C0, C1, C2, C3, C4, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?) {
+  .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
+}
+
+extension RegexBuilder {
+  public static func buildLimitedAvailability<W, C0, C1, C2, C3, C4, Component: RegexProtocol>(
+    _ component: Component
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?) {
+    .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
+  }
+}
 public func zeroOrMore<W, C0, C1, C2, C3, C4, Component: RegexProtocol>(
   _ component: Component,
   _ behavior: QuantificationBehavior = .eagerly
@@ -1041,6 +1404,27 @@ public postfix func .*<W, C0, C1, C2, C3, C4, Component: RegexProtocol>(
 }
 
 
+public func zeroOrMore<W, C0, C1, C2, C3, C4, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2, C3, C4)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?) {
+  .init(node: .quantification(.zeroOrMore, behavior.astKind, component.regex.root))
+}
+
+public func zeroOrMore<W, C0, C1, C2, C3, C4, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?) {
+  .init(node: .quantification(.zeroOrMore, behavior.astKind, component().regex.root))
+}
+
+public postfix func .*<W, C0, C1, C2, C3, C4, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?) {
+  .init(node: .quantification(.zeroOrMore, .eager, component.regex.root))
+}
+
+
 public func oneOrMore<W, C0, C1, C2, C3, C4, Component: RegexProtocol>(
   _ component: Component,
   _ behavior: QuantificationBehavior = .eagerly
@@ -1058,6 +1442,27 @@ public func oneOrMore<W, C0, C1, C2, C3, C4, Component: RegexProtocol>(
 public postfix func .+<W, C0, C1, C2, C3, C4, Component: RegexProtocol>(
   _ component: Component
 ) -> Regex<(Substring, C0, C1, C2, C3, C4)> where Component.Match == (W, C0, C1, C2, C3, C4) {
+  .init(node: .quantification(.oneOrMore, .eager, component.regex.root))
+}
+
+
+public func oneOrMore<W, C0, C1, C2, C3, C4, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2, C3, C4)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?) {
+  .init(node: .quantification(.oneOrMore, behavior.astKind, component.regex.root))
+}
+
+public func oneOrMore<W, C0, C1, C2, C3, C4, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?) {
+  .init(node: .quantification(.oneOrMore, behavior.astKind, component().regex.root))
+}
+
+public postfix func .+<W, C0, C1, C2, C3, C4, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?) {
   .init(node: .quantification(.oneOrMore, .eager, component.regex.root))
 }
 
@@ -1093,6 +1498,21 @@ public func repeating<W, C0, C1, C2, C3, C4, Component: RegexProtocol, R: RangeE
   _ behavior: QuantificationBehavior = .eagerly,
   @RegexBuilder _ component: () -> Component
 ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where Component.Match == (W, C0, C1, C2, C3, C4), R.Bound == Int {
+  .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component().regex.root))
+}
+public func repeating<W, C0, C1, C2, C3, C4, Component: RegexProtocol, R: RangeExpression>(
+  _ component: Component,
+  _ expression: R,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2, C3, C4)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?), R.Bound == Int {
+  .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component.regex.root))
+}
+
+public func repeating<W, C0, C1, C2, C3, C4, Component: RegexProtocol, R: RangeExpression>(
+  _ expression: R,
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?), R.Bound == Int {
   .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component().regex.root))
 }
 public func optionally<W, C0, C1, C2, C3, C4, C5, Component: RegexProtocol>(
@@ -1122,6 +1542,33 @@ extension RegexBuilder {
     .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
   }
 }
+public func optionally<W, C0, C1, C2, C3, C4, C5, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?) {
+  .init(node: .quantification(.zeroOrOne, behavior.astKind, component.regex.root))
+}
+
+public func optionally<W, C0, C1, C2, C3, C4, C5, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?) {
+  .init(node: .quantification(.zeroOrOne, behavior.astKind, component().regex.root))
+}
+
+public postfix func .?<W, C0, C1, C2, C3, C4, C5, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?) {
+  .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
+}
+
+extension RegexBuilder {
+  public static func buildLimitedAvailability<W, C0, C1, C2, C3, C4, C5, Component: RegexProtocol>(
+    _ component: Component
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?) {
+    .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
+  }
+}
 public func zeroOrMore<W, C0, C1, C2, C3, C4, C5, Component: RegexProtocol>(
   _ component: Component,
   _ behavior: QuantificationBehavior = .eagerly
@@ -1143,6 +1590,27 @@ public postfix func .*<W, C0, C1, C2, C3, C4, C5, Component: RegexProtocol>(
 }
 
 
+public func zeroOrMore<W, C0, C1, C2, C3, C4, C5, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?) {
+  .init(node: .quantification(.zeroOrMore, behavior.astKind, component.regex.root))
+}
+
+public func zeroOrMore<W, C0, C1, C2, C3, C4, C5, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?) {
+  .init(node: .quantification(.zeroOrMore, behavior.astKind, component().regex.root))
+}
+
+public postfix func .*<W, C0, C1, C2, C3, C4, C5, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?) {
+  .init(node: .quantification(.zeroOrMore, .eager, component.regex.root))
+}
+
+
 public func oneOrMore<W, C0, C1, C2, C3, C4, C5, Component: RegexProtocol>(
   _ component: Component,
   _ behavior: QuantificationBehavior = .eagerly
@@ -1160,6 +1628,27 @@ public func oneOrMore<W, C0, C1, C2, C3, C4, C5, Component: RegexProtocol>(
 public postfix func .+<W, C0, C1, C2, C3, C4, C5, Component: RegexProtocol>(
   _ component: Component
 ) -> Regex<(Substring, C0, C1, C2, C3, C4, C5)> where Component.Match == (W, C0, C1, C2, C3, C4, C5) {
+  .init(node: .quantification(.oneOrMore, .eager, component.regex.root))
+}
+
+
+public func oneOrMore<W, C0, C1, C2, C3, C4, C5, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?) {
+  .init(node: .quantification(.oneOrMore, behavior.astKind, component.regex.root))
+}
+
+public func oneOrMore<W, C0, C1, C2, C3, C4, C5, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?) {
+  .init(node: .quantification(.oneOrMore, behavior.astKind, component().regex.root))
+}
+
+public postfix func .+<W, C0, C1, C2, C3, C4, C5, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?) {
   .init(node: .quantification(.oneOrMore, .eager, component.regex.root))
 }
 
@@ -1195,6 +1684,21 @@ public func repeating<W, C0, C1, C2, C3, C4, C5, Component: RegexProtocol, R: Ra
   _ behavior: QuantificationBehavior = .eagerly,
   @RegexBuilder _ component: () -> Component
 ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where Component.Match == (W, C0, C1, C2, C3, C4, C5), R.Bound == Int {
+  .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component().regex.root))
+}
+public func repeating<W, C0, C1, C2, C3, C4, C5, Component: RegexProtocol, R: RangeExpression>(
+  _ component: Component,
+  _ expression: R,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?), R.Bound == Int {
+  .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component.regex.root))
+}
+
+public func repeating<W, C0, C1, C2, C3, C4, C5, Component: RegexProtocol, R: RangeExpression>(
+  _ expression: R,
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?), R.Bound == Int {
   .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component().regex.root))
 }
 public func optionally<W, C0, C1, C2, C3, C4, C5, C6, Component: RegexProtocol>(
@@ -1224,6 +1728,33 @@ extension RegexBuilder {
     .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
   }
 }
+public func optionally<W, C0, C1, C2, C3, C4, C5, C6, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?) {
+  .init(node: .quantification(.zeroOrOne, behavior.astKind, component.regex.root))
+}
+
+public func optionally<W, C0, C1, C2, C3, C4, C5, C6, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?) {
+  .init(node: .quantification(.zeroOrOne, behavior.astKind, component().regex.root))
+}
+
+public postfix func .?<W, C0, C1, C2, C3, C4, C5, C6, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?) {
+  .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
+}
+
+extension RegexBuilder {
+  public static func buildLimitedAvailability<W, C0, C1, C2, C3, C4, C5, C6, Component: RegexProtocol>(
+    _ component: Component
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?) {
+    .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
+  }
+}
 public func zeroOrMore<W, C0, C1, C2, C3, C4, C5, C6, Component: RegexProtocol>(
   _ component: Component,
   _ behavior: QuantificationBehavior = .eagerly
@@ -1245,6 +1776,27 @@ public postfix func .*<W, C0, C1, C2, C3, C4, C5, C6, Component: RegexProtocol>(
 }
 
 
+public func zeroOrMore<W, C0, C1, C2, C3, C4, C5, C6, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?) {
+  .init(node: .quantification(.zeroOrMore, behavior.astKind, component.regex.root))
+}
+
+public func zeroOrMore<W, C0, C1, C2, C3, C4, C5, C6, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?) {
+  .init(node: .quantification(.zeroOrMore, behavior.astKind, component().regex.root))
+}
+
+public postfix func .*<W, C0, C1, C2, C3, C4, C5, C6, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?) {
+  .init(node: .quantification(.zeroOrMore, .eager, component.regex.root))
+}
+
+
 public func oneOrMore<W, C0, C1, C2, C3, C4, C5, C6, Component: RegexProtocol>(
   _ component: Component,
   _ behavior: QuantificationBehavior = .eagerly
@@ -1262,6 +1814,27 @@ public func oneOrMore<W, C0, C1, C2, C3, C4, C5, C6, Component: RegexProtocol>(
 public postfix func .+<W, C0, C1, C2, C3, C4, C5, C6, Component: RegexProtocol>(
   _ component: Component
 ) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6)> where Component.Match == (W, C0, C1, C2, C3, C4, C5, C6) {
+  .init(node: .quantification(.oneOrMore, .eager, component.regex.root))
+}
+
+
+public func oneOrMore<W, C0, C1, C2, C3, C4, C5, C6, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?) {
+  .init(node: .quantification(.oneOrMore, behavior.astKind, component.regex.root))
+}
+
+public func oneOrMore<W, C0, C1, C2, C3, C4, C5, C6, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?) {
+  .init(node: .quantification(.oneOrMore, behavior.astKind, component().regex.root))
+}
+
+public postfix func .+<W, C0, C1, C2, C3, C4, C5, C6, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?) {
   .init(node: .quantification(.oneOrMore, .eager, component.regex.root))
 }
 
@@ -1297,6 +1870,21 @@ public func repeating<W, C0, C1, C2, C3, C4, C5, C6, Component: RegexProtocol, R
   _ behavior: QuantificationBehavior = .eagerly,
   @RegexBuilder _ component: () -> Component
 ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where Component.Match == (W, C0, C1, C2, C3, C4, C5, C6), R.Bound == Int {
+  .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component().regex.root))
+}
+public func repeating<W, C0, C1, C2, C3, C4, C5, C6, Component: RegexProtocol, R: RangeExpression>(
+  _ component: Component,
+  _ expression: R,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?), R.Bound == Int {
+  .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component.regex.root))
+}
+
+public func repeating<W, C0, C1, C2, C3, C4, C5, C6, Component: RegexProtocol, R: RangeExpression>(
+  _ expression: R,
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?), R.Bound == Int {
   .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component().regex.root))
 }
 public func optionally<W, C0, C1, C2, C3, C4, C5, C6, C7, Component: RegexProtocol>(
@@ -1326,6 +1914,33 @@ extension RegexBuilder {
     .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
   }
 }
+public func optionally<W, C0, C1, C2, C3, C4, C5, C6, C7, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?) {
+  .init(node: .quantification(.zeroOrOne, behavior.astKind, component.regex.root))
+}
+
+public func optionally<W, C0, C1, C2, C3, C4, C5, C6, C7, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?) {
+  .init(node: .quantification(.zeroOrOne, behavior.astKind, component().regex.root))
+}
+
+public postfix func .?<W, C0, C1, C2, C3, C4, C5, C6, C7, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?) {
+  .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
+}
+
+extension RegexBuilder {
+  public static func buildLimitedAvailability<W, C0, C1, C2, C3, C4, C5, C6, C7, Component: RegexProtocol>(
+    _ component: Component
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?) {
+    .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
+  }
+}
 public func zeroOrMore<W, C0, C1, C2, C3, C4, C5, C6, C7, Component: RegexProtocol>(
   _ component: Component,
   _ behavior: QuantificationBehavior = .eagerly
@@ -1347,6 +1962,27 @@ public postfix func .*<W, C0, C1, C2, C3, C4, C5, C6, C7, Component: RegexProtoc
 }
 
 
+public func zeroOrMore<W, C0, C1, C2, C3, C4, C5, C6, C7, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?) {
+  .init(node: .quantification(.zeroOrMore, behavior.astKind, component.regex.root))
+}
+
+public func zeroOrMore<W, C0, C1, C2, C3, C4, C5, C6, C7, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?) {
+  .init(node: .quantification(.zeroOrMore, behavior.astKind, component().regex.root))
+}
+
+public postfix func .*<W, C0, C1, C2, C3, C4, C5, C6, C7, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?) {
+  .init(node: .quantification(.zeroOrMore, .eager, component.regex.root))
+}
+
+
 public func oneOrMore<W, C0, C1, C2, C3, C4, C5, C6, C7, Component: RegexProtocol>(
   _ component: Component,
   _ behavior: QuantificationBehavior = .eagerly
@@ -1364,6 +2000,27 @@ public func oneOrMore<W, C0, C1, C2, C3, C4, C5, C6, C7, Component: RegexProtoco
 public postfix func .+<W, C0, C1, C2, C3, C4, C5, C6, C7, Component: RegexProtocol>(
   _ component: Component
 ) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7)> where Component.Match == (W, C0, C1, C2, C3, C4, C5, C6, C7) {
+  .init(node: .quantification(.oneOrMore, .eager, component.regex.root))
+}
+
+
+public func oneOrMore<W, C0, C1, C2, C3, C4, C5, C6, C7, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?) {
+  .init(node: .quantification(.oneOrMore, behavior.astKind, component.regex.root))
+}
+
+public func oneOrMore<W, C0, C1, C2, C3, C4, C5, C6, C7, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?) {
+  .init(node: .quantification(.oneOrMore, behavior.astKind, component().regex.root))
+}
+
+public postfix func .+<W, C0, C1, C2, C3, C4, C5, C6, C7, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?) {
   .init(node: .quantification(.oneOrMore, .eager, component.regex.root))
 }
 
@@ -1399,6 +2056,21 @@ public func repeating<W, C0, C1, C2, C3, C4, C5, C6, C7, Component: RegexProtoco
   _ behavior: QuantificationBehavior = .eagerly,
   @RegexBuilder _ component: () -> Component
 ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where Component.Match == (W, C0, C1, C2, C3, C4, C5, C6, C7), R.Bound == Int {
+  .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component().regex.root))
+}
+public func repeating<W, C0, C1, C2, C3, C4, C5, C6, C7, Component: RegexProtocol, R: RangeExpression>(
+  _ component: Component,
+  _ expression: R,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?), R.Bound == Int {
+  .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component.regex.root))
+}
+
+public func repeating<W, C0, C1, C2, C3, C4, C5, C6, C7, Component: RegexProtocol, R: RangeExpression>(
+  _ expression: R,
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?), R.Bound == Int {
   .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component().regex.root))
 }
 public func optionally<W, C0, C1, C2, C3, C4, C5, C6, C7, C8, Component: RegexProtocol>(
@@ -1428,6 +2100,33 @@ extension RegexBuilder {
     .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
   }
 }
+public func optionally<W, C0, C1, C2, C3, C4, C5, C6, C7, C8, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7, C8)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?) {
+  .init(node: .quantification(.zeroOrOne, behavior.astKind, component.regex.root))
+}
+
+public func optionally<W, C0, C1, C2, C3, C4, C5, C6, C7, C8, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7, C8)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?) {
+  .init(node: .quantification(.zeroOrOne, behavior.astKind, component().regex.root))
+}
+
+public postfix func .?<W, C0, C1, C2, C3, C4, C5, C6, C7, C8, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7, C8)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?) {
+  .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
+}
+
+extension RegexBuilder {
+  public static func buildLimitedAvailability<W, C0, C1, C2, C3, C4, C5, C6, C7, C8, Component: RegexProtocol>(
+    _ component: Component
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?) {
+    .init(node: .quantification(.zeroOrOne, .eager, component.regex.root))
+  }
+}
 public func zeroOrMore<W, C0, C1, C2, C3, C4, C5, C6, C7, C8, Component: RegexProtocol>(
   _ component: Component,
   _ behavior: QuantificationBehavior = .eagerly
@@ -1449,6 +2148,27 @@ public postfix func .*<W, C0, C1, C2, C3, C4, C5, C6, C7, C8, Component: RegexPr
 }
 
 
+public func zeroOrMore<W, C0, C1, C2, C3, C4, C5, C6, C7, C8, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7, C8)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?) {
+  .init(node: .quantification(.zeroOrMore, behavior.astKind, component.regex.root))
+}
+
+public func zeroOrMore<W, C0, C1, C2, C3, C4, C5, C6, C7, C8, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7, C8)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?) {
+  .init(node: .quantification(.zeroOrMore, behavior.astKind, component().regex.root))
+}
+
+public postfix func .*<W, C0, C1, C2, C3, C4, C5, C6, C7, C8, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7, C8)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?) {
+  .init(node: .quantification(.zeroOrMore, .eager, component.regex.root))
+}
+
+
 public func oneOrMore<W, C0, C1, C2, C3, C4, C5, C6, C7, C8, Component: RegexProtocol>(
   _ component: Component,
   _ behavior: QuantificationBehavior = .eagerly
@@ -1466,6 +2186,27 @@ public func oneOrMore<W, C0, C1, C2, C3, C4, C5, C6, C7, C8, Component: RegexPro
 public postfix func .+<W, C0, C1, C2, C3, C4, C5, C6, C7, C8, Component: RegexProtocol>(
   _ component: Component
 ) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7, C8)> where Component.Match == (W, C0, C1, C2, C3, C4, C5, C6, C7, C8) {
+  .init(node: .quantification(.oneOrMore, .eager, component.regex.root))
+}
+
+
+public func oneOrMore<W, C0, C1, C2, C3, C4, C5, C6, C7, C8, Component: RegexProtocol>(
+  _ component: Component,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7, C8)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?) {
+  .init(node: .quantification(.oneOrMore, behavior.astKind, component.regex.root))
+}
+
+public func oneOrMore<W, C0, C1, C2, C3, C4, C5, C6, C7, C8, Component: RegexProtocol>(
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7, C8)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?) {
+  .init(node: .quantification(.oneOrMore, behavior.astKind, component().regex.root))
+}
+
+public postfix func .+<W, C0, C1, C2, C3, C4, C5, C6, C7, C8, Component: RegexProtocol>(
+  _ component: Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7, C8)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?) {
   .init(node: .quantification(.oneOrMore, .eager, component.regex.root))
 }
 
@@ -1503,6 +2244,21 @@ public func repeating<W, C0, C1, C2, C3, C4, C5, C6, C7, C8, Component: RegexPro
 ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where Component.Match == (W, C0, C1, C2, C3, C4, C5, C6, C7, C8), R.Bound == Int {
   .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component().regex.root))
 }
+public func repeating<W, C0, C1, C2, C3, C4, C5, C6, C7, C8, Component: RegexProtocol, R: RangeExpression>(
+  _ component: Component,
+  _ expression: R,
+  _ behavior: QuantificationBehavior = .eagerly
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7, C8)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?), R.Bound == Int {
+  .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component.regex.root))
+}
+
+public func repeating<W, C0, C1, C2, C3, C4, C5, C6, C7, C8, Component: RegexProtocol, R: RangeExpression>(
+  _ expression: R,
+  _ behavior: QuantificationBehavior = .eagerly,
+  @RegexBuilder _ component: () -> Component
+) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7, C8)> where Component.Match == (W, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?), R.Bound == Int {
+  .init(node: .repeating(expression.relative(to: 0..<Int.max), behavior, component().regex.root))
+}
 extension AlternationBuilder {
   public static func buildBlock<R0, R1>(
     combining next: R1, into combined: R0
@@ -1514,6 +2270,7 @@ extension AlternationBuilder {
 public func | <R0, R1>(lhs: R0, rhs: R1) -> Regex<Substring> where R0: RegexProtocol, R1: RegexProtocol {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
+
 extension AlternationBuilder {
   public static func buildBlock<R0, R1, W1, C0>(
     combining next: R1, into combined: R0
@@ -1523,6 +2280,18 @@ extension AlternationBuilder {
 }
 
 public func | <R0, R1, W1, C0>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, R1, W1, C0>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, R1, W1, C0>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
@@ -1536,6 +2305,18 @@ extension AlternationBuilder {
 public func | <R0, R1, W1, C0, C1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0, C1) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, R1, W1, C0, C1>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0?, C1?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, R1, W1, C0, C1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0?, C1?) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
 extension AlternationBuilder {
   public static func buildBlock<R0, R1, W1, C0, C1, C2>(
     combining next: R1, into combined: R0
@@ -1545,6 +2326,18 @@ extension AlternationBuilder {
 }
 
 public func | <R0, R1, W1, C0, C1, C2>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0, C1, C2) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, R1, W1, C0, C1, C2>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0?, C1?, C2?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, R1, W1, C0, C1, C2>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0?, C1?, C2?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
@@ -1558,6 +2351,18 @@ extension AlternationBuilder {
 public func | <R0, R1, W1, C0, C1, C2, C3>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0, C1, C2, C3) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, R1, W1, C0, C1, C2, C3>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0?, C1?, C2?, C3?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, R1, W1, C0, C1, C2, C3>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0?, C1?, C2?, C3?) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
 extension AlternationBuilder {
   public static func buildBlock<R0, R1, W1, C0, C1, C2, C3, C4>(
     combining next: R1, into combined: R0
@@ -1567,6 +2372,18 @@ extension AlternationBuilder {
 }
 
 public func | <R0, R1, W1, C0, C1, C2, C3, C4>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0, C1, C2, C3, C4) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, R1, W1, C0, C1, C2, C3, C4>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0?, C1?, C2?, C3?, C4?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, R1, W1, C0, C1, C2, C3, C4>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0?, C1?, C2?, C3?, C4?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
@@ -1580,6 +2397,18 @@ extension AlternationBuilder {
 public func | <R0, R1, W1, C0, C1, C2, C3, C4, C5>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0, C1, C2, C3, C4, C5) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, R1, W1, C0, C1, C2, C3, C4, C5>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0?, C1?, C2?, C3?, C4?, C5?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, R1, W1, C0, C1, C2, C3, C4, C5>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0?, C1?, C2?, C3?, C4?, C5?) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
 extension AlternationBuilder {
   public static func buildBlock<R0, R1, W1, C0, C1, C2, C3, C4, C5, C6>(
     combining next: R1, into combined: R0
@@ -1589,6 +2418,18 @@ extension AlternationBuilder {
 }
 
 public func | <R0, R1, W1, C0, C1, C2, C3, C4, C5, C6>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0, C1, C2, C3, C4, C5, C6) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, R1, W1, C0, C1, C2, C3, C4, C5, C6>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0?, C1?, C2?, C3?, C4?, C5?, C6?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, R1, W1, C0, C1, C2, C3, C4, C5, C6>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0?, C1?, C2?, C3?, C4?, C5?, C6?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
@@ -1602,6 +2443,18 @@ extension AlternationBuilder {
 public func | <R0, R1, W1, C0, C1, C2, C3, C4, C5, C6, C7>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0, C1, C2, C3, C4, C5, C6, C7) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, R1, W1, C0, C1, C2, C3, C4, C5, C6, C7>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, R1, W1, C0, C1, C2, C3, C4, C5, C6, C7>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
 extension AlternationBuilder {
   public static func buildBlock<R0, R1, W1, C0, C1, C2, C3, C4, C5, C6, C7, C8>(
     combining next: R1, into combined: R0
@@ -1611,6 +2464,18 @@ extension AlternationBuilder {
 }
 
 public func | <R0, R1, W1, C0, C1, C2, C3, C4, C5, C6, C7, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0, C1, C2, C3, C4, C5, C6, C7, C8) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, R1, W1, C0, C1, C2, C3, C4, C5, C6, C7, C8>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, R1, W1, C0, C1, C2, C3, C4, C5, C6, C7, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
@@ -1624,598 +2489,1258 @@ extension AlternationBuilder {
 public func | <R0, R1, W1, C0, C1, C2, C3, C4, C5, C6, C7, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0, C1, C2, C3, C4, C5, C6, C7, C8, C9) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
+
 extension AlternationBuilder {
-  public static func buildBlock<R0, W0, C0, R1>(
+  public static func buildBlock<R0, R1, W1, C0, C1, C2, C3, C4, C5, C6, C7, C8, C9>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0) {
+public func | <R0, R1, W1, C0, C1, C2, C3, C4, C5, C6, C7, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R1.Match == (W1, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, R1>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, R1>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, R1, W1, C1>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1) {
+  ) -> Regex<(Substring, C0?, C1?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, R1, W1, C1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1) {
+public func | <R0, W0, C0, R1, W1, C1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, R1, W1, C1>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?), R1.Match == (W1, C1?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, R1, W1, C1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?), R1.Match == (W1, C1?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, R1, W1, C1, C2>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1?, C2?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2) {
+  ) -> Regex<(Substring, C0?, C1?, C2?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, R1, W1, C1, C2>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1?, C2?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2) {
+public func | <R0, W0, C0, R1, W1, C1, C2>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, R1, W1, C1, C2>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?), R1.Match == (W1, C1?, C2?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, R1, W1, C1, C2>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?), R1.Match == (W1, C1?, C2?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, R1, W1, C1, C2, C3>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1?, C2?, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, R1, W1, C1, C2, C3>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1?, C2?, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3) {
+public func | <R0, W0, C0, R1, W1, C1, C2, C3>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, R1, W1, C1, C2, C3>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?), R1.Match == (W1, C1?, C2?, C3?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, R1, W1, C1, C2, C3>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?), R1.Match == (W1, C1?, C2?, C3?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, R1, W1, C1, C2, C3, C4>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3, C4) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3, C4) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, R1, W1, C1, C2, C3, C4>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3, C4) {
+public func | <R0, W0, C0, R1, W1, C1, C2, C3, C4>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3, C4) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, R1, W1, C1, C2, C3, C4>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?), R1.Match == (W1, C1?, C2?, C3?, C4?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, R1, W1, C1, C2, C3, C4>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?), R1.Match == (W1, C1?, C2?, C3?, C4?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, R1, W1, C1, C2, C3, C4, C5>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3, C4, C5) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3, C4, C5) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, R1, W1, C1, C2, C3, C4, C5>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3, C4, C5) {
+public func | <R0, W0, C0, R1, W1, C1, C2, C3, C4, C5>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3, C4, C5) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, R1, W1, C1, C2, C3, C4, C5>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?), R1.Match == (W1, C1?, C2?, C3?, C4?, C5?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, R1, W1, C1, C2, C3, C4, C5>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?), R1.Match == (W1, C1?, C2?, C3?, C4?, C5?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, R1, W1, C1, C2, C3, C4, C5, C6>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3, C4, C5, C6) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3, C4, C5, C6) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, R1, W1, C1, C2, C3, C4, C5, C6>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3, C4, C5, C6) {
+public func | <R0, W0, C0, R1, W1, C1, C2, C3, C4, C5, C6>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3, C4, C5, C6) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, R1, W1, C1, C2, C3, C4, C5, C6>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?), R1.Match == (W1, C1?, C2?, C3?, C4?, C5?, C6?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, R1, W1, C1, C2, C3, C4, C5, C6>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?), R1.Match == (W1, C1?, C2?, C3?, C4?, C5?, C6?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, R1, W1, C1, C2, C3, C4, C5, C6, C7>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3, C4, C5, C6, C7) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3, C4, C5, C6, C7) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, R1, W1, C1, C2, C3, C4, C5, C6, C7>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3, C4, C5, C6, C7) {
+public func | <R0, W0, C0, R1, W1, C1, C2, C3, C4, C5, C6, C7>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3, C4, C5, C6, C7) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, R1, W1, C1, C2, C3, C4, C5, C6, C7>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?), R1.Match == (W1, C1?, C2?, C3?, C4?, C5?, C6?, C7?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, R1, W1, C1, C2, C3, C4, C5, C6, C7>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?), R1.Match == (W1, C1?, C2?, C3?, C4?, C5?, C6?, C7?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, R1, W1, C1, C2, C3, C4, C5, C6, C7, C8>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3, C4, C5, C6, C7, C8) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3, C4, C5, C6, C7, C8) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, R1, W1, C1, C2, C3, C4, C5, C6, C7, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3, C4, C5, C6, C7, C8) {
+public func | <R0, W0, C0, R1, W1, C1, C2, C3, C4, C5, C6, C7, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3, C4, C5, C6, C7, C8) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, R1, W1, C1, C2, C3, C4, C5, C6, C7, C8>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?), R1.Match == (W1, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, R1, W1, C1, C2, C3, C4, C5, C6, C7, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?), R1.Match == (W1, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, R1, W1, C1, C2, C3, C4, C5, C6, C7, C8, C9>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3, C4, C5, C6, C7, C8, C9) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3, C4, C5, C6, C7, C8, C9) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, R1, W1, C1, C2, C3, C4, C5, C6, C7, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3, C4, C5, C6, C7, C8, C9) {
+public func | <R0, W0, C0, R1, W1, C1, C2, C3, C4, C5, C6, C7, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0), R1.Match == (W1, C1, C2, C3, C4, C5, C6, C7, C8, C9) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, R1, W1, C1, C2, C3, C4, C5, C6, C7, C8, C9>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?), R1.Match == (W1, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, R1, W1, C1, C2, C3, C4, C5, C6, C7, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?), R1.Match == (W1, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, R1>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1) {
+  ) -> Regex<(Substring, C0?, C1?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1) {
+public func | <R0, W0, C0, C1, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, R1>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, R1, W1, C2>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2) {
+  ) -> Regex<(Substring, C0?, C1?, C2?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, R1, W1, C2>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2) {
+public func | <R0, W0, C0, C1, R1, W1, C2>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, R1, W1, C2>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?), R1.Match == (W1, C2?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, R1, W1, C2>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?), R1.Match == (W1, C2?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, R1, W1, C2, C3>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2?, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, R1, W1, C2, C3>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2?, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3) {
+public func | <R0, W0, C0, C1, R1, W1, C2, C3>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, R1, W1, C2, C3>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?), R1.Match == (W1, C2?, C3?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, R1, W1, C2, C3>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?), R1.Match == (W1, C2?, C3?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, R1, W1, C2, C3, C4>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3, C4) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3, C4) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, R1, W1, C2, C3, C4>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3, C4) {
+public func | <R0, W0, C0, C1, R1, W1, C2, C3, C4>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3, C4) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, R1, W1, C2, C3, C4>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?), R1.Match == (W1, C2?, C3?, C4?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, R1, W1, C2, C3, C4>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?), R1.Match == (W1, C2?, C3?, C4?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, R1, W1, C2, C3, C4, C5>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3, C4, C5) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3, C4, C5) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, R1, W1, C2, C3, C4, C5>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3, C4, C5) {
+public func | <R0, W0, C0, C1, R1, W1, C2, C3, C4, C5>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3, C4, C5) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, R1, W1, C2, C3, C4, C5>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?), R1.Match == (W1, C2?, C3?, C4?, C5?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, R1, W1, C2, C3, C4, C5>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?), R1.Match == (W1, C2?, C3?, C4?, C5?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, R1, W1, C2, C3, C4, C5, C6>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3, C4, C5, C6) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3, C4, C5, C6) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, R1, W1, C2, C3, C4, C5, C6>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3, C4, C5, C6) {
+public func | <R0, W0, C0, C1, R1, W1, C2, C3, C4, C5, C6>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3, C4, C5, C6) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, R1, W1, C2, C3, C4, C5, C6>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?), R1.Match == (W1, C2?, C3?, C4?, C5?, C6?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, R1, W1, C2, C3, C4, C5, C6>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?), R1.Match == (W1, C2?, C3?, C4?, C5?, C6?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, R1, W1, C2, C3, C4, C5, C6, C7>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3, C4, C5, C6, C7) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3, C4, C5, C6, C7) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, R1, W1, C2, C3, C4, C5, C6, C7>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3, C4, C5, C6, C7) {
+public func | <R0, W0, C0, C1, R1, W1, C2, C3, C4, C5, C6, C7>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3, C4, C5, C6, C7) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, R1, W1, C2, C3, C4, C5, C6, C7>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?), R1.Match == (W1, C2?, C3?, C4?, C5?, C6?, C7?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, R1, W1, C2, C3, C4, C5, C6, C7>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?), R1.Match == (W1, C2?, C3?, C4?, C5?, C6?, C7?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, R1, W1, C2, C3, C4, C5, C6, C7, C8>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3, C4, C5, C6, C7, C8) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3, C4, C5, C6, C7, C8) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, R1, W1, C2, C3, C4, C5, C6, C7, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3, C4, C5, C6, C7, C8) {
+public func | <R0, W0, C0, C1, R1, W1, C2, C3, C4, C5, C6, C7, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3, C4, C5, C6, C7, C8) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, R1, W1, C2, C3, C4, C5, C6, C7, C8>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?), R1.Match == (W1, C2?, C3?, C4?, C5?, C6?, C7?, C8?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, R1, W1, C2, C3, C4, C5, C6, C7, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?), R1.Match == (W1, C2?, C3?, C4?, C5?, C6?, C7?, C8?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, R1, W1, C2, C3, C4, C5, C6, C7, C8, C9>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3, C4, C5, C6, C7, C8, C9) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3, C4, C5, C6, C7, C8, C9) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, R1, W1, C2, C3, C4, C5, C6, C7, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3, C4, C5, C6, C7, C8, C9) {
+public func | <R0, W0, C0, C1, R1, W1, C2, C3, C4, C5, C6, C7, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1), R1.Match == (W1, C2, C3, C4, C5, C6, C7, C8, C9) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, R1, W1, C2, C3, C4, C5, C6, C7, C8, C9>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?), R1.Match == (W1, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, R1, W1, C2, C3, C4, C5, C6, C7, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?), R1.Match == (W1, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, R1>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2) {
+  ) -> Regex<(Substring, C0?, C1?, C2?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2) {
+public func | <R0, W0, C0, C1, C2, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, R1>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, R1, W1, C3>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, R1, W1, C3>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3) {
+public func | <R0, W0, C0, C1, C2, R1, W1, C3>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, R1, W1, C3>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?), R1.Match == (W1, C3?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, R1, W1, C3>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?), R1.Match == (W1, C3?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, R1, W1, C3, C4>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3, C4) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3, C4) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, R1, W1, C3, C4>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3, C4) {
+public func | <R0, W0, C0, C1, C2, R1, W1, C3, C4>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3, C4) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, R1, W1, C3, C4>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?), R1.Match == (W1, C3?, C4?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, R1, W1, C3, C4>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?), R1.Match == (W1, C3?, C4?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, R1, W1, C3, C4, C5>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3, C4, C5) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3, C4, C5) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, R1, W1, C3, C4, C5>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3, C4, C5) {
+public func | <R0, W0, C0, C1, C2, R1, W1, C3, C4, C5>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3, C4, C5) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, R1, W1, C3, C4, C5>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?), R1.Match == (W1, C3?, C4?, C5?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, R1, W1, C3, C4, C5>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?), R1.Match == (W1, C3?, C4?, C5?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, R1, W1, C3, C4, C5, C6>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3, C4, C5, C6) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3, C4, C5, C6) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, R1, W1, C3, C4, C5, C6>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3, C4, C5, C6) {
+public func | <R0, W0, C0, C1, C2, R1, W1, C3, C4, C5, C6>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3, C4, C5, C6) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, R1, W1, C3, C4, C5, C6>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?), R1.Match == (W1, C3?, C4?, C5?, C6?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, R1, W1, C3, C4, C5, C6>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?), R1.Match == (W1, C3?, C4?, C5?, C6?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, R1, W1, C3, C4, C5, C6, C7>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3, C4, C5, C6, C7) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3, C4, C5, C6, C7) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, R1, W1, C3, C4, C5, C6, C7>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3, C4, C5, C6, C7) {
+public func | <R0, W0, C0, C1, C2, R1, W1, C3, C4, C5, C6, C7>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3, C4, C5, C6, C7) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, R1, W1, C3, C4, C5, C6, C7>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?), R1.Match == (W1, C3?, C4?, C5?, C6?, C7?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, R1, W1, C3, C4, C5, C6, C7>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?), R1.Match == (W1, C3?, C4?, C5?, C6?, C7?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, R1, W1, C3, C4, C5, C6, C7, C8>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3, C4, C5, C6, C7, C8) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3, C4, C5, C6, C7, C8) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, R1, W1, C3, C4, C5, C6, C7, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3, C4, C5, C6, C7, C8) {
+public func | <R0, W0, C0, C1, C2, R1, W1, C3, C4, C5, C6, C7, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3, C4, C5, C6, C7, C8) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, R1, W1, C3, C4, C5, C6, C7, C8>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?), R1.Match == (W1, C3?, C4?, C5?, C6?, C7?, C8?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, R1, W1, C3, C4, C5, C6, C7, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?), R1.Match == (W1, C3?, C4?, C5?, C6?, C7?, C8?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, R1, W1, C3, C4, C5, C6, C7, C8, C9>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3, C4, C5, C6, C7, C8, C9) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3, C4, C5, C6, C7, C8, C9) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, R1, W1, C3, C4, C5, C6, C7, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3, C4, C5, C6, C7, C8, C9) {
+public func | <R0, W0, C0, C1, C2, R1, W1, C3, C4, C5, C6, C7, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2), R1.Match == (W1, C3, C4, C5, C6, C7, C8, C9) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, R1, W1, C3, C4, C5, C6, C7, C8, C9>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?), R1.Match == (W1, C3?, C4?, C5?, C6?, C7?, C8?, C9?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, R1, W1, C3, C4, C5, C6, C7, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?), R1.Match == (W1, C3?, C4?, C5?, C6?, C7?, C8?, C9?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, R1>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3) {
+public func | <R0, W0, C0, C1, C2, C3, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, R1>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, R1, W1, C4>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3), R1.Match == (W1, C4) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3), R1.Match == (W1, C4) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, R1, W1, C4>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3), R1.Match == (W1, C4) {
+public func | <R0, W0, C0, C1, C2, C3, R1, W1, C4>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3), R1.Match == (W1, C4) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, R1, W1, C4>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?), R1.Match == (W1, C4?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, R1, W1, C4>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?), R1.Match == (W1, C4?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, R1, W1, C4, C5>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3), R1.Match == (W1, C4, C5) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3), R1.Match == (W1, C4, C5) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, R1, W1, C4, C5>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3), R1.Match == (W1, C4, C5) {
+public func | <R0, W0, C0, C1, C2, C3, R1, W1, C4, C5>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3), R1.Match == (W1, C4, C5) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, R1, W1, C4, C5>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?), R1.Match == (W1, C4?, C5?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, R1, W1, C4, C5>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?), R1.Match == (W1, C4?, C5?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, R1, W1, C4, C5, C6>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3), R1.Match == (W1, C4, C5, C6) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3), R1.Match == (W1, C4, C5, C6) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, R1, W1, C4, C5, C6>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3), R1.Match == (W1, C4, C5, C6) {
+public func | <R0, W0, C0, C1, C2, C3, R1, W1, C4, C5, C6>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3), R1.Match == (W1, C4, C5, C6) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, R1, W1, C4, C5, C6>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?), R1.Match == (W1, C4?, C5?, C6?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, R1, W1, C4, C5, C6>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?), R1.Match == (W1, C4?, C5?, C6?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, R1, W1, C4, C5, C6, C7>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3), R1.Match == (W1, C4, C5, C6, C7) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3), R1.Match == (W1, C4, C5, C6, C7) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, R1, W1, C4, C5, C6, C7>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3), R1.Match == (W1, C4, C5, C6, C7) {
+public func | <R0, W0, C0, C1, C2, C3, R1, W1, C4, C5, C6, C7>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3), R1.Match == (W1, C4, C5, C6, C7) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, R1, W1, C4, C5, C6, C7>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?), R1.Match == (W1, C4?, C5?, C6?, C7?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, R1, W1, C4, C5, C6, C7>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?), R1.Match == (W1, C4?, C5?, C6?, C7?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, R1, W1, C4, C5, C6, C7, C8>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3), R1.Match == (W1, C4, C5, C6, C7, C8) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3), R1.Match == (W1, C4, C5, C6, C7, C8) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, R1, W1, C4, C5, C6, C7, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3), R1.Match == (W1, C4, C5, C6, C7, C8) {
+public func | <R0, W0, C0, C1, C2, C3, R1, W1, C4, C5, C6, C7, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3), R1.Match == (W1, C4, C5, C6, C7, C8) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, R1, W1, C4, C5, C6, C7, C8>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?), R1.Match == (W1, C4?, C5?, C6?, C7?, C8?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, R1, W1, C4, C5, C6, C7, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?), R1.Match == (W1, C4?, C5?, C6?, C7?, C8?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, R1, W1, C4, C5, C6, C7, C8, C9>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3), R1.Match == (W1, C4, C5, C6, C7, C8, C9) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3), R1.Match == (W1, C4, C5, C6, C7, C8, C9) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, R1, W1, C4, C5, C6, C7, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3), R1.Match == (W1, C4, C5, C6, C7, C8, C9) {
+public func | <R0, W0, C0, C1, C2, C3, R1, W1, C4, C5, C6, C7, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3), R1.Match == (W1, C4, C5, C6, C7, C8, C9) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, R1, W1, C4, C5, C6, C7, C8, C9>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?), R1.Match == (W1, C4?, C5?, C6?, C7?, C8?, C9?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, R1, W1, C4, C5, C6, C7, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?), R1.Match == (W1, C4?, C5?, C6?, C7?, C8?, C9?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, R1>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, C4, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4) {
+public func | <R0, W0, C0, C1, C2, C3, C4, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, R1>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, C4, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, R1, W1, C5>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4), R1.Match == (W1, C5) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4), R1.Match == (W1, C5) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, C4, R1, W1, C5>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4), R1.Match == (W1, C5) {
+public func | <R0, W0, C0, C1, C2, C3, C4, R1, W1, C5>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4), R1.Match == (W1, C5) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, R1, W1, C5>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?), R1.Match == (W1, C5?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, C4, R1, W1, C5>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?), R1.Match == (W1, C5?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, R1, W1, C5, C6>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4), R1.Match == (W1, C5, C6) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4), R1.Match == (W1, C5, C6) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, C4, R1, W1, C5, C6>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4), R1.Match == (W1, C5, C6) {
+public func | <R0, W0, C0, C1, C2, C3, C4, R1, W1, C5, C6>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4), R1.Match == (W1, C5, C6) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, R1, W1, C5, C6>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?), R1.Match == (W1, C5?, C6?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, C4, R1, W1, C5, C6>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?), R1.Match == (W1, C5?, C6?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, R1, W1, C5, C6, C7>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4), R1.Match == (W1, C5, C6, C7) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4), R1.Match == (W1, C5, C6, C7) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, C4, R1, W1, C5, C6, C7>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4), R1.Match == (W1, C5, C6, C7) {
+public func | <R0, W0, C0, C1, C2, C3, C4, R1, W1, C5, C6, C7>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4), R1.Match == (W1, C5, C6, C7) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, R1, W1, C5, C6, C7>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?), R1.Match == (W1, C5?, C6?, C7?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, C4, R1, W1, C5, C6, C7>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?), R1.Match == (W1, C5?, C6?, C7?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, R1, W1, C5, C6, C7, C8>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4), R1.Match == (W1, C5, C6, C7, C8) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4), R1.Match == (W1, C5, C6, C7, C8) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, C4, R1, W1, C5, C6, C7, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4), R1.Match == (W1, C5, C6, C7, C8) {
+public func | <R0, W0, C0, C1, C2, C3, C4, R1, W1, C5, C6, C7, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4), R1.Match == (W1, C5, C6, C7, C8) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, R1, W1, C5, C6, C7, C8>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?), R1.Match == (W1, C5?, C6?, C7?, C8?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, C4, R1, W1, C5, C6, C7, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?), R1.Match == (W1, C5?, C6?, C7?, C8?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, R1, W1, C5, C6, C7, C8, C9>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4), R1.Match == (W1, C5, C6, C7, C8, C9) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4), R1.Match == (W1, C5, C6, C7, C8, C9) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, C4, R1, W1, C5, C6, C7, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4), R1.Match == (W1, C5, C6, C7, C8, C9) {
+public func | <R0, W0, C0, C1, C2, C3, C4, R1, W1, C5, C6, C7, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4), R1.Match == (W1, C5, C6, C7, C8, C9) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, R1, W1, C5, C6, C7, C8, C9>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?), R1.Match == (W1, C5?, C6?, C7?, C8?, C9?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, C4, R1, W1, C5, C6, C7, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?), R1.Match == (W1, C5?, C6?, C7?, C8?, C9?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, R1>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4, C5)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, C4, C5, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4, C5)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5) {
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, R1>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, R1, W1, C6>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5), R1.Match == (W1, C6) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5), R1.Match == (W1, C6) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, C4, C5, R1, W1, C6>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5), R1.Match == (W1, C6) {
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, R1, W1, C6>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5), R1.Match == (W1, C6) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, R1, W1, C6>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?), R1.Match == (W1, C6?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, R1, W1, C6>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?), R1.Match == (W1, C6?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, R1, W1, C6, C7>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5), R1.Match == (W1, C6, C7) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5), R1.Match == (W1, C6, C7) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, C4, C5, R1, W1, C6, C7>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5), R1.Match == (W1, C6, C7) {
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, R1, W1, C6, C7>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5), R1.Match == (W1, C6, C7) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, R1, W1, C6, C7>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?), R1.Match == (W1, C6?, C7?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, R1, W1, C6, C7>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?), R1.Match == (W1, C6?, C7?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, R1, W1, C6, C7, C8>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5), R1.Match == (W1, C6, C7, C8) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5), R1.Match == (W1, C6, C7, C8) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, C4, C5, R1, W1, C6, C7, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5), R1.Match == (W1, C6, C7, C8) {
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, R1, W1, C6, C7, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5), R1.Match == (W1, C6, C7, C8) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, R1, W1, C6, C7, C8>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?), R1.Match == (W1, C6?, C7?, C8?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, R1, W1, C6, C7, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?), R1.Match == (W1, C6?, C7?, C8?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, R1, W1, C6, C7, C8, C9>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5), R1.Match == (W1, C6, C7, C8, C9) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5), R1.Match == (W1, C6, C7, C8, C9) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, C4, C5, R1, W1, C6, C7, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5), R1.Match == (W1, C6, C7, C8, C9) {
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, R1, W1, C6, C7, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5), R1.Match == (W1, C6, C7, C8, C9) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, R1, W1, C6, C7, C8, C9>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?), R1.Match == (W1, C6?, C7?, C8?, C9?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, R1, W1, C6, C7, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?), R1.Match == (W1, C6?, C7?, C8?, C9?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, C6, R1>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6) {
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, C6, R1>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?, C6?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?, C6?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, C6, R1, W1, C7>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6), R1.Match == (W1, C7) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6), R1.Match == (W1, C7) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, R1, W1, C7>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6), R1.Match == (W1, C7) {
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, R1, W1, C7>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6), R1.Match == (W1, C7) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, C6, R1, W1, C7>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?, C6?), R1.Match == (W1, C7?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, R1, W1, C7>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?, C6?), R1.Match == (W1, C7?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, C6, R1, W1, C7, C8>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6), R1.Match == (W1, C7, C8) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6), R1.Match == (W1, C7, C8) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, R1, W1, C7, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6), R1.Match == (W1, C7, C8) {
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, R1, W1, C7, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6), R1.Match == (W1, C7, C8) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, C6, R1, W1, C7, C8>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?, C6?), R1.Match == (W1, C7?, C8?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, R1, W1, C7, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?, C6?), R1.Match == (W1, C7?, C8?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, C6, R1, W1, C7, C8, C9>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6), R1.Match == (W1, C7, C8, C9) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6), R1.Match == (W1, C7, C8, C9) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, R1, W1, C7, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6), R1.Match == (W1, C7, C8, C9) {
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, R1, W1, C7, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6), R1.Match == (W1, C7, C8, C9) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, C6, R1, W1, C7, C8, C9>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?, C6?), R1.Match == (W1, C7?, C8?, C9?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, R1, W1, C7, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?, C6?), R1.Match == (W1, C7?, C8?, C9?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, R1>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6, C7) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6, C7) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6, C7) {
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6, C7) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, R1>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, R1, W1, C8>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6, C7), R1.Match == (W1, C8) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6, C7), R1.Match == (W1, C8) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, R1, W1, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6, C7), R1.Match == (W1, C8) {
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, R1, W1, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6, C7), R1.Match == (W1, C8) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, R1, W1, C8>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?), R1.Match == (W1, C8?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, R1, W1, C8>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?), R1.Match == (W1, C8?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, R1, W1, C8, C9>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6, C7), R1.Match == (W1, C8, C9) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6, C7), R1.Match == (W1, C8, C9) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, R1, W1, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6, C7), R1.Match == (W1, C8, C9) {
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, R1, W1, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6, C7), R1.Match == (W1, C8, C9) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, R1, W1, C8, C9>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?), R1.Match == (W1, C8?, C9?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, R1, W1, C8, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?), R1.Match == (W1, C8?, C9?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, C8, R1>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7, C8)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6, C7, C8) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6, C7, C8) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, C8, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7, C8)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6, C7, C8) {
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, C8, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6, C7, C8) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, C8, R1>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, C8, R1>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
   public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, C8, R1, W1, C9>(
     combining next: R1, into combined: R0
-  ) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7, C8, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6, C7, C8), R1.Match == (W1, C9) {
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6, C7, C8), R1.Match == (W1, C9) {
     .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
   }
 }
 
-public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, C8, R1, W1, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0, C1, C2, C3, C4, C5, C6, C7, C8, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6, C7, C8), R1.Match == (W1, C9) {
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, C8, R1, W1, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0, C1, C2, C3, C4, C5, C6, C7, C8), R1.Match == (W1, C9) {
+  .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
+}
+
+extension AlternationBuilder {
+  public static func buildBlock<R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, C8, R1, W1, C9>(
+    combining next: R1, into combined: R0
+  ) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?), R1.Match == (W1, C9?) {
+    .init(node: combined.regex.root.appendingAlternationCase(next.regex.root))
+  }
+}
+
+public func | <R0, W0, C0, C1, C2, C3, C4, C5, C6, C7, C8, R1, W1, C9>(lhs: R0, rhs: R1) -> Regex<(Substring, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?, C9?)> where R0: RegexProtocol, R1: RegexProtocol, R0.Match == (W0, C0?, C1?, C2?, C3?, C4?, C5?, C6?, C7?, C8?), R1.Match == (W1, C9?) {
   .init(node: lhs.regex.root.appendingAlternationCase(rhs.regex.root))
 }
 extension AlternationBuilder {
