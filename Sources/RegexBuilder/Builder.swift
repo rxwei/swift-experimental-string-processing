@@ -45,8 +45,11 @@ public enum RegexComponentBuilder {
   }
   
   // FIXME: ApolloZhu do we want to introduce a typealias for (Any) -> Void, e.g. CustomResultBuilderDebuggingContextProvidingCallback
-  // TODO: is optional callback a good idea? (no debugCallback other than -Onone
+  // TODO: ApolloZhu is optional callback a good idea? (no debugCallback other than -Onone
   // TODO: ApolloZhu autocomplete or near miss checker?
+  // TODO: ApolloZhu what if they only have one version of buildExpression that takes debugCallback?
+  // They'll probably get a compile time error in release mode, so not a problem?
+  // Do we allow a buildExpression with debugCallback only (and no buildExpression in other cases?)
   // TODO: ApolloZhu @escaping checker?
   // TODO: ApolloZhu availability marker
   @_alwaysEmitIntoClient
