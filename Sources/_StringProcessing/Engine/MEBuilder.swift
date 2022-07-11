@@ -42,6 +42,8 @@ extension MEProgram {
     // Symbolic reference resolution
     var unresolvedReferences: [ReferenceID: [InstructionAddress]] = [:]
     var referencedCaptureOffsets: [ReferenceID: Int] = [:]
+    
+    var debugCallbacks: [InstructionAddress: (Any) -> Void] = [:]
 
     var captureCount: Int {
       // We currently deduce the capture count from the capture register number.
@@ -229,6 +231,11 @@ extension MEProgram.Builder {
     }
     buildBackreference(.init(index))
   }
+  
+  mutating func buildDebugCallback(_ debugCallback: @escaping (Any) -> Void) {
+    debugCallbacks[InstructionAddress(rawValue: instructions.count)] = debugCallback
+    instructions.append(.init(.debugCallback))
+  }
 
   // TODO: Mutating because of fail address fixup, drop when
   // that's removed
@@ -298,6 +305,7 @@ extension MEProgram.Builder {
       staticTransformFunctions: transformFunctions,
       staticMatcherFunctions: matcherFunctions,
       registerInfo: regInfo,
+      debugCallbacks: debugCallbacks,
       captureList: captureList,
       referencedCaptureOffsets: referencedCaptureOffsets,
       initialOptions: initialOptions)

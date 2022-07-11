@@ -277,6 +277,9 @@ extension PrettyPrinter {
 
     case .absentFunction:
       print("/* TODO: absent function */")
+
+    case let .debuggable(n, debugCallback: _):
+      printAsPattern(convertedFromAST: n)
     }
   }
   

@@ -43,6 +43,10 @@ extension DSLTree.Node {
       fatalError("FIXME: Is this where we handle them?")
     case .characterPredicate:
       fatalError("FIXME: Is this where we handle them?")
+
+    case let .debuggable(n, debugCallback: _):
+      // TODO: ApolloZhu Regex confirm okay to skip debugCallback
+      return try n.generateConsumer(opts)
     }
   }
 }

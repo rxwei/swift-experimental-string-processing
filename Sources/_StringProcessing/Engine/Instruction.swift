@@ -212,6 +212,7 @@ extension Instruction {
     // TODO: Fused assertions. It seems like we often want to
     // branch based on assertion fail or success.
 
+    case debugCallback
   }
 }
 

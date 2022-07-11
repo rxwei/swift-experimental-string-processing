@@ -828,6 +828,10 @@ fileprivate extension Compiler.ByteCodeGen {
 
     case .trivia, .empty:
       return nil
+      
+    case let .debuggable(n, debugCallback: debugCallback):
+      builder.buildDebugCallback(debugCallback)
+      return try emitNode(n)
     }
     return nil
   }

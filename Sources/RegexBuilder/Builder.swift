@@ -14,6 +14,26 @@
 @available(SwiftStdlib 5.7, *)
 @resultBuilder
 public enum RegexComponentBuilder {
+  // TODO: ApolloZhu doc
+  // TODO: ApolloZhu availability marker
+  public struct Component<Value: RegexComponent>: RegexComponent {
+    private let value: Value
+    private let debugCallback: ((Any) -> Void)?
+    
+    @usableFromInline
+    init(value: Value, debugCallback: ((Any) -> Void)?) {
+      self.value = value
+      self.debugCallback = debugCallback
+    }
+    
+    public var regex: Regex<Value.RegexOutput> {
+      if let debugCallback {
+        return _RegexFactory().debuggable(value, debugCallback)
+      }
+      return value.regex
+    }
+  }
+  
   public static func buildBlock() -> Regex<Substring> {
     _RegexFactory().empty()
   }
@@ -23,8 +43,17 @@ public enum RegexComponentBuilder {
   ) -> Regex<R.RegexOutput> {
     component.regex
   }
-
-  public static func buildExpression<R: RegexComponent>(_ regex: R) -> R {
-    regex
+  
+  // FIXME: ApolloZhu do we want to introduce a typealias for (Any) -> Void, e.g. CustomResultBuilderDebuggingContextProvidingCallback
+  // TODO: is optional callback a good idea? (no debugCallback other than -Onone
+  // TODO: ApolloZhu autocomplete or near miss checker?
+  // TODO: ApolloZhu @escaping checker?
+  // TODO: ApolloZhu availability marker
+  @_alwaysEmitIntoClient
+  public static func buildExpression<R: RegexComponent>(
+    _ regex: R,
+    debugCallback: ((Any) -> Void)? = nil
+  ) -> Component<R> {
+    .init(value: regex, debugCallback: debugCallback)
   }
 }

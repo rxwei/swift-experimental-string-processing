@@ -41,6 +41,7 @@ struct MEProgram {
   var registerInfo: RegisterInfo
 
   var enableTracing: Bool = false
+  var debugCallbacks: [InstructionAddress: (Any) -> Void]
 
   let captureList: CaptureList
   let referencedCaptureOffsets: [ReferenceID: Int]

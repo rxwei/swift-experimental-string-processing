@@ -91,6 +91,8 @@ extension DSLTree {
 
     // TODO: Would this just boil down to a consumer?
     case characterPredicate(_CharacterPredicateInterface)
+    
+    case debuggable(Node, debugCallback: (Any) -> Void)
   }
 }
 
@@ -347,6 +349,9 @@ extension DSLTree.Node {
 
     case let .absentFunction(abs):
       return abs.ast.children.map(\.dslTreeNode)
+    case let .debuggable(n, debugCallback: _):
+      // TODO: ApolloZhu Regex is it okay to ignore callback here?
+      return n.children
     }
   }
 }
@@ -608,6 +613,10 @@ extension CaptureList.Builder {
     case .customCharacterClass, .atom, .trivia, .empty,
         .quotedLiteral, .consumer, .characterPredicate:
       break
+    
+    case let .debuggable(n, debugCallback: _):
+      // TODO: Apollo Zhu Regex confirm okay to skip debugCallback
+      addCaptures(of: n, optionalNesting: nesting)
     }
   }
 
@@ -625,7 +634,8 @@ extension DSLTree.Node {
   /// output but forwarding its only child's output.
   var isOutputForwarding: Bool {
     switch self {
-    case .nonCapturingGroup:
+    case .nonCapturingGroup, .debuggable:
+      // TODO: ApolloZhu check if deubggable is correct
       return true
     case .orderedChoice, .concatenation, .capture,
          .conditional, .quantification, .customCharacterClass, .atom,
@@ -695,6 +705,11 @@ extension DSLTree {
 
       case let .absentFunction(abs):
         return abs.ast.children.map(\.dslTreeNode).map(_Tree.init)
+        
+      case let .debuggable(n, debugCallback: _):
+        // TODO: ApolloZhu Regex confirm the chosen one is correct
+        // return _Tree(n).children
+        return [_Tree(n)]
       }
     }
   }
