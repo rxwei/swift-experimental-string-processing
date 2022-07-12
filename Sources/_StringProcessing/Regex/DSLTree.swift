@@ -635,7 +635,7 @@ extension DSLTree.Node {
   var isOutputForwarding: Bool {
     switch self {
     case .nonCapturingGroup, .debuggable:
-      // TODO: ApolloZhu check if deubggable is correct
+      // TODO: ApolloZhu check if debuggable is correct
       return true
     case .orderedChoice, .concatenation, .capture,
          .conditional, .quantification, .customCharacterClass, .atom,
