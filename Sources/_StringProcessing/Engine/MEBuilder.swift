@@ -43,7 +43,7 @@ extension MEProgram {
     var unresolvedReferences: [ReferenceID: [InstructionAddress]] = [:]
     var referencedCaptureOffsets: [ReferenceID: Int] = [:]
     
-    var debugCallbacks: [InstructionAddress: (Any) -> Void] = [:]
+    var debugCallbacks: [InstructionAddress: CustomResultBuilderDebuggingContextProvidingCallback] = [:]
 
     var captureCount: Int {
       // We currently deduce the capture count from the capture register number.
@@ -232,7 +232,7 @@ extension MEProgram.Builder {
     buildBackreference(.init(index))
   }
   
-  mutating func buildDebugCallback(_ debugCallback: @escaping (Any) -> Void) {
+  mutating func buildDebugCallback(_ debugCallback: @escaping CustomResultBuilderDebuggingContextProvidingCallback) {
     debugCallbacks[InstructionAddress(rawValue: instructions.count)] = debugCallback
     instructions.append(.init(.debugCallback))
   }

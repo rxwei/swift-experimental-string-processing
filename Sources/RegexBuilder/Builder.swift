@@ -18,10 +18,10 @@ public enum RegexComponentBuilder {
   // TODO: ApolloZhu availability marker
   public struct Component<Value: RegexComponent>: RegexComponent {
     private let value: Value
-    private let debugCallback: ((Any) -> Void)?
+    private let debugCallback: CustomResultBuilderDebuggingContextProvidingCallback?
     
     @usableFromInline
-    init(value: Value, debugCallback: ((Any) -> Void)?) {
+    init(value: Value, debugCallback: CustomResultBuilderDebuggingContextProvidingCallback?) {
       self.value = value
       self.debugCallback = debugCallback
     }
@@ -44,7 +44,6 @@ public enum RegexComponentBuilder {
     component.regex
   }
   
-  // FIXME: ApolloZhu do we want to introduce a typealias for (Any) -> Void, e.g. CustomResultBuilderDebuggingContextProvidingCallback
   // TODO: ApolloZhu is optional callback a good idea? (no debugCallback other than -Onone
   // TODO: ApolloZhu autocomplete or near miss checker?
   // TODO: ApolloZhu what if they only have one version of buildExpression that takes debugCallback?
@@ -55,7 +54,7 @@ public enum RegexComponentBuilder {
   @_alwaysEmitIntoClient
   public static func buildExpression<R: RegexComponent>(
     _ regex: R,
-    debugCallback: ((Any) -> Void)? = nil
+    debugCallback: CustomResultBuilderDebuggingContextProvidingCallback? = nil
   ) -> Component<R> {
     .init(value: regex, debugCallback: debugCallback)
   }

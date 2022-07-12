@@ -88,7 +88,7 @@ struct Processor {
   // MARK: Metrics, debugging, etc.
   var cycleCount = 0
   var isTracingEnabled: Bool
-  var debugCallbacks: [InstructionAddress: (Any) -> Void]
+  var debugCallbacks: [InstructionAddress: CustomResultBuilderDebuggingContextProvidingCallback]
 }
 
 extension Processor {

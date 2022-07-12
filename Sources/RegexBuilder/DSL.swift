@@ -178,7 +178,7 @@ public struct AlternationBuilder {
   @_alwaysEmitIntoClient
   public static func buildExpression<R: RegexComponent>(
     _ regex: R,
-    debugCallback: ((Any) -> Void)? = nil
+    debugCallback: CustomResultBuilderDebuggingContextProvidingCallback? = nil
   ) -> Component<R> {
     .init(value: regex, debugCallback: debugCallback)
   }

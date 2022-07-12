@@ -205,7 +205,7 @@ public struct _RegexFactory {
   // TODO: ApolloZhu availability marker
   public func debuggable<Output>(
     _ component: some RegexComponent,
-    _ debugCallback: @escaping (Any) -> Void
+    _ debugCallback: @escaping CustomResultBuilderDebuggingContextProvidingCallback
   ) -> Regex<Output> {
     .init(node: .debuggable(component.regex.root, debugCallback: debugCallback))
   }

@@ -92,7 +92,7 @@ extension DSLTree {
     // TODO: Would this just boil down to a consumer?
     case characterPredicate(_CharacterPredicateInterface)
     
-    case debuggable(Node, debugCallback: (Any) -> Void)
+    case debuggable(Node, debugCallback: CustomResultBuilderDebuggingContextProvidingCallback)
   }
 }
 
