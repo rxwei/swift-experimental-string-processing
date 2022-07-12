@@ -351,7 +351,7 @@ extension DSLTree.Node {
       return abs.ast.children.map(\.dslTreeNode)
     case let .debuggable(n, debugCallback: _):
       // TODO: ApolloZhu Regex is it okay to ignore callback here?
-      return n.children
+      return [n]
     }
   }
 }
