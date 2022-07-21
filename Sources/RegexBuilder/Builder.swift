@@ -18,17 +18,17 @@ public enum RegexComponentBuilder {
   // TODO: ApolloZhu availability marker
   public struct Component<Value: RegexComponent>: RegexComponent {
     private let value: Value
-    private let debugCallback: CustomResultBuilderDebuggingContextProvidingCallback?
+    private let debugInfoProvider: DSLDebugInfoProvider?
     
     @usableFromInline
-    init(value: Value, debugCallback: CustomResultBuilderDebuggingContextProvidingCallback?) {
+    init(value: Value, debugInfoProvider: DSLDebugInfoProvider?) {
       self.value = value
-      self.debugCallback = debugCallback
+      self.debugInfoProvider = debugInfoProvider
     }
     
     public var regex: Regex<Value.RegexOutput> {
-      if let debugCallback {
-        return _RegexFactory().debuggable(value, debugCallback)
+      if let debugInfoProvider {
+        return _RegexFactory().debuggable(value, debugInfoProvider)
       }
       return value.regex
     }
@@ -44,18 +44,18 @@ public enum RegexComponentBuilder {
     component.regex
   }
   
-  // TODO: ApolloZhu is optional callback a good idea? (no debugCallback other than -Onone
+  // TODO: ApolloZhu is optional callback a good idea? (no debugInfoProvider other than -Onone
   // TODO: ApolloZhu autocomplete or near miss checker?
-  // TODO: ApolloZhu what if they only have one version of buildExpression that takes debugCallback?
+  // TODO: ApolloZhu what if they only have one version of buildExpression that takes debugInfoProvider?
   // They'll probably get a compile time error in release mode, so not a problem?
-  // Do we allow a buildExpression with debugCallback only (and no buildExpression in other cases?)
+  // Do we allow a buildExpression with debugInfoProvider only (and no buildExpression in other cases?)
   // TODO: ApolloZhu @escaping checker?
   // TODO: ApolloZhu availability marker
   @_alwaysEmitIntoClient
   public static func buildExpression<R: RegexComponent>(
     _ regex: R,
-    debugCallback: CustomResultBuilderDebuggingContextProvidingCallback? = nil
+    debugInfoProvider: DSLDebugInfoProvider? = nil
   ) -> Component<R> {
-    .init(value: regex, debugCallback: debugCallback)
+    .init(value: regex, debugInfoProvider: debugInfoProvider)
   }
 }

@@ -88,7 +88,7 @@ struct Processor {
   // MARK: Metrics, debugging, etc.
   var cycleCount = 0
   var isTracingEnabled: Bool
-  var debugCallbacks: [InstructionAddress: CustomResultBuilderDebuggingContextProvidingCallback]
+  var debugInfoProviders: [InstructionAddress: DSLDebugInfoProvider]
 }
 
 extension Processor {
@@ -115,7 +115,7 @@ extension Processor {
     self.matchMode = matchMode
     self.isTracingEnabled = isTracingEnabled
     self.currentPosition = searchBounds.lowerBound
-    self.debugCallbacks = program.debugCallbacks
+    self.debugInfoProviders = program.debugInfoProviders
 
     // Initialize registers with end of search bounds
     self.registers = Registers(program, searchBounds.upperBound)
@@ -505,9 +505,9 @@ extension Processor {
     case .builtinCharacterClass:
       builtinCharacterClass()
       
-    case .debugCallback:
+    case .provideDebugInfo:
       // TODO: ApolloZhu better debug context
-      debugCallbacks[currentPC]!(currentPosition.utf16Offset(in: input))
+      debugInfoProviders[currentPC]!(context: currentPosition.utf16Offset(in: input))
       controller.step()
     }
   }

@@ -65,8 +65,6 @@ extension Instruction.Payload {
     case packedCapTran(CaptureRegister, TransformRegister)
     case packedMatchVal(MatcherRegister, ValueRegister)
     case packedValueCapture(ValueRegister, CaptureRegister)
-    
-    case debugCallback(CustomResultBuilderDebuggingContextProvidingCallback)
   }
 }
 
